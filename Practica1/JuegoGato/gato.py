@@ -9,8 +9,7 @@ import os
 
 class Gato:
     def __init__(self):
-        self.t=np.zeros((3,3),dtype=np.int)     # Matriz inicial de ceros
-        self.p=""                               # Coordenadas a guardar
+        self.t=np.zeros((3,3),dtype=np.int)     # Matriz inicial de ceros                             # Coordenadas a guardar
         self.xy=[]                              # Coordenadas a guardar en enteros
 
     def bienvenida(self):   # Mensaje de bienvenida
@@ -20,8 +19,8 @@ class Gato:
         return str(self.t)
     
     def jugadaP1(self): # Jugada del jugador 1
-        self.p=input("\nIngrese las coordenadas donde desea tirar: ")
-        return self.p
+        p=input("\nIngrese las coordenadas donde desea tirar: ")
+        return p
         
     def jugadaP2(self): # Jugada del jugador 2 (maquina)
         a=rand.randint(0,2) # Numeros al azar donde poner el número
@@ -44,3 +43,7 @@ class Gato:
         elif (np.diag(np.fliplr(self.t))==gan).all():   # Diagonal inversa
             ganador=True
         return ganador  # Devuelve verdadero si es que alguien ganó
+
+    def ocupado(self,coor,tipo):
+        self.xy=coor.split(",")   # Separación del string recibido
+        print(self.xy)

@@ -33,3 +33,5 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
         UDPServerSocket.sendto(bytesToSend, address) # Sending a reply to client
 
         data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
+
+        juego.ocupado(str(data),1)
