@@ -17,19 +17,12 @@ class Gato:
         print("Bienvenido al juego de gato\n")
 
     def verGato(self):  # Muestra del tablero
-        print(self.t)
+        return str(self.t)
     
     def jugadaP1(self): # Jugada del jugador 1
         self.p=input("\nIngrese las coordenadas donde desea tirar: ")
-        self.xy=self.p.split(",")   # Separación del string recibido
-        if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
-            self.t[int(self.xy[0])][int(self.xy[1])]=1
-        else:   # Si no es así, ingrese de nuevo otras coordenas
-            os.system ("clear")
-            print("Lugar ocupado\n")
-            self.verGato()
-            self.jugadaP1()
-
+        return self.p
+        
     def jugadaP2(self): # Jugada del jugador 2 (maquina)
         a=rand.randint(0,2) # Numeros al azar donde poner el número
         b=rand.randint(0,2)
@@ -51,36 +44,3 @@ class Gato:
         elif (np.diag(np.fliplr(self.t))==gan).all():   # Diagonal inversa
             ganador=True
         return ganador  # Devuelve verdadero si es que alguien ganó
-
-sig1=False; sig2=False  # Variables para seguir o no jugando y verificar al ganador
-tirosP1=0; tirosP2=0    # Numero de tiros que lleva cada jugador
-cat=Gato()              # Se crea el objeto Gato llamado cat
-cat.bienvenida()        
-while(True):
-    cat.verGato()
-
-    cat.jugadaP1()
-    tirosP1+=1          # Realizada la jugada, se suma un turno
-    if tirosP1>=2:      # Si el turno supera los 2, se verifica si es candidato a ganar
-        sig1=cat.verifica(1)
-    if sig1:            # Si es verdadero, acaba el juego y el ganador es el jugador 1
-        cat.verGato()
-        print("\n\tEl ganador es el jugador 1!!!\n")
-        break
-    elif tirosP1>=4 and tirosP2>=4: # si los tiros sobrepasan los 4 turnos, o bien, se llena la matriz, acaba la partida
-        cat.verGato()
-        print("\n\tGato!!!\n")
-        break
-
-    cat.jugadaP2()
-    tirosP2+=1          # Realizada la jugada, se suma un turno
-    if tirosP2>=2:      # Si el turno supera los 2, se verifica si es candidato a ganar
-        sig2=cat.verifica(-1)
-    if sig2:            # Si es verdadero, acaba el juego y el ganador es el jugador 2
-        cat.verGato()
-        print("\n\tEl ganador es el jugador 2!!!\n")
-        break
-    else:               # Si nada de lo anterior se cumple, se sigue jugando hasta que haya un ganador
-        os.system ("clear")
-
-print("\t\tFin del juego Dx\n")
