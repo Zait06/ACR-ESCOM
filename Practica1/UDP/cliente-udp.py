@@ -17,15 +17,15 @@ juego=Gato()
 with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as UDPClientSocket:
     UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Send to server using created UDP socket
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
-    print("{}".format(msgFromServer[0]))
+    print(msgFromServer[0].decode('utf-8'))
 
     while(True):
         msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
-        #print("{}".format(msgFromServer[0]))
-        if str(msgFromServer[0])=="b'p1'":
+        msgRecib=msgFromServer[0].decode('utf-8')   # Mensaje recivido
+        if str(msgRecib)=="p1":     # Si el mensaje recibido es p1, es turno del cliente
             msgFromClient=juego.jugadaP1()
             bytesToSend = str.encode(msgFromClient)
             UDPClientSocket.sendto(bytesToSend, serverAddressPort)
         else:
-            print(str(msgFromServer[0]))
+            print(msgRecib)
         

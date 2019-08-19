@@ -17,21 +17,20 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     print("Servidor UDP a la escucha")
 
     # Listen for incoming datagrams
-    msgFromServer = "Bienvenido al juego de gato"
+    msgFromServer = "Bienvenido al juego de gato\n"
     bytesToSend = str.encode(msgFromServer)
     data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
-    UDPServerSocket.sendto(bytesToSend, address) # Sending a reply to client
+    UDPServerSocket.sendto(bytesToSend, address) # Manda Mensaje al cliete
 
     while (True):
-        print("\nMensaje del cliente:{}".format(data))
+        print("\nMensaje del cliente: "+str(data.decode()))
         msgFromServer=juego.verGato()
         bytesToSend=str.encode(msgFromServer)
-        UDPServerSocket.sendto(bytesToSend, address) # Sending a reply to client
+        UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje al cliente
 
-        msgFromServer="p1"
+        msgFromServer='p1'
         bytesToSend=str.encode(msgFromServer)
-        UDPServerSocket.sendto(bytesToSend, address) # Sending a reply to client
+        UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje al cliente
 
         data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
-
-        juego.ocupado(str(data),1)
+        juego.ocupado(str(data.decode()),1) # Verficar lugar ocupado
