@@ -15,17 +15,25 @@ juego=Gato()
 # Create a UDP socket at client side
 
 with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as UDPClientSocket:
-    UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Send to server using created UDP socket
+    UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Manda mensaje al servidor
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
-    print(msgFromServer[0].decode('utf-8'))
+    os.system ("clear") # Limpia la consola
+    print(msgFromServer[0].decode('utf-8'))                 # Imprime primer mensaje del servidor
 
     while(True):
         msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
-        msgRecib=msgFromServer[0].decode('utf-8')   # Mensaje recivido
-        if str(msgRecib)=="p1":     # Si el mensaje recibido es p1, es turno del cliente
-            msgFromClient=juego.jugadaP1()
-            bytesToSend = str.encode(msgFromClient)
-            UDPClientSocket.sendto(bytesToSend, serverAddressPort)
-        else:
+        msgRecib=msgFromServer[0].decode('utf-8')   # Mensaje recibido y decodificado
+        if str(msgRecib)=="p1":     # Si el mensaje recibido es p1, es turno del cliente para jugar
+            msgFromClient=juego.jugadaP1()  # Elije las coordenadas el cliente
+            bytesToSend = str.encode(msgFromClient) # Codifica las coordenadas
+            UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
+            os.system ("clear") # Limpia la consola
+        elif str(msgRecib)=="Lugar ocupado":    # Si el lugar está ocupado, le avisa al cliente
+            os.system ("clear")
             print(msgRecib)
-        
+        elif str(msgRecib)=="exit":
+            break
+        else:
+            print(msgRecib) # Imprime el mensaje recibido
+
+print("\t\tFin del juego Dx\n")       

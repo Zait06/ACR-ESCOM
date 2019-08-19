@@ -7,9 +7,10 @@ from gato import *
 HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 54321  # The port used by the server
 bufferSize = 1024
+seguir=True
 juego=Gato()
-# msgFromServer = "Hello UDP Client"          # Mensaje a mandar
-# bytesToSend = str.encode(msgFromServer)     # Mensaje pasado a bits
+sig1=False; sig2=False  # Variables para seguir o no jugando y verificar al ganador
+tirosP1=0; tirosP2=0    # Numero de tiros que lleva cada jugador
 
 with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Abrir conexión
     UDPServerSocket.bind((HOST, PORT))
@@ -33,4 +34,51 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
         UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje al cliente
 
         data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
-        juego.ocupado(str(data.decode()),1) # Verficar lugar ocupado
+        
+        seguir=juego.ocupado(str(data.decode()),1) # Verficar lugar ocupado
+
+        if seguir:
+
+            tirosP1+=1          # Realizada la jugada, se suma un turno
+            if tirosP1>=2:      # Si el turno supera los 2, se verifica si es candidato a ganar
+                sig1=juego.verifica(1)
+            if sig1:            # Si es verdadero, acaba el juego y el ganador es el jugador 1
+                msgFromServer=juego.verGato()   
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje del tablero al cliente
+                msgFromServer="\n\tEl ganador es el jugador 1!!!\n"
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que ha ganado
+                msgFromServer="exit"
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de la conexión se cierrar
+                break
+            elif tirosP1>=4 and tirosP2>=4: # si los tiros sobrepasan los 4 turnos, o bien, se llena la matriz, acaba la partida
+                msgFromServer=juego.verGato()   
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje del tablero al cliente
+                msgFromServer="\n\tGato!!!\n"
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que es turno del cliente
+                break
+
+            juego.jugadaP2()
+
+            tirosP2+=1          # Realizada la jugada, se suma un turno
+            if tirosP2>=2:      # Si el turno supera los 2, se verifica si es candidato a ganar
+                sig2=juego.verifica(-1)
+            if sig2:            # Si es verdadero, acaba el juego y el ganador es el jugador 2
+                msgFromServer=juego.verGato()   
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje del tablero al cliente
+                msgFromServer="\n\tEl ganador es el jugador 2!!!\n"
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que ha ganado el servidor
+                msgFromServer="exit"
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de la conexión se cierrar
+                break
+        else:
+            msgFromServer='Lugar ocupado'
+            bytesToSend=str.encode(msgFromServer)
+            UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje del lugar ocupado al cliente

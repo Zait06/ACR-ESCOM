@@ -45,5 +45,11 @@ class Gato:
         return ganador  # Devuelve verdadero si es que alguien ganó
 
     def ocupado(self,coor,tipo):
+        sip=False
         self.xy=coor.split(",")   # Separación del string recibido
-        print(self.xy)
+        if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
+            self.t[int(self.xy[0])][int(self.xy[1])]=tipo
+            sip=True
+        else:
+            sip=False
+        return sip
