@@ -1,8 +1,6 @@
 import socket
 import sys
 import os
-sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
-from gato import *
 
 HOST=input("Ingrese la IP del servidor: ")
 PORT=int(input("Ingrese el puerto del servidor: "))
@@ -11,7 +9,7 @@ msgFromClient = "Conexion hecha"
 bytesToSend = str.encode(msgFromClient)
 serverAddressPort = (HOST,PORT)
 bufferSize = 1024
-juego=Gato()
+
 
 # Create a UDP socket at client side
 
@@ -19,13 +17,17 @@ with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as UDPClientSocket:
     UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Manda mensaje al servidor
     msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
     os.system ("clear") # Limpia la consola
-    print(msgFromServer[0].decode('utf-8'))                 # Imprime primer mensaje del servidor
+    print(msgFromServer[0].decode())                 # Imprime primer mensaje del servidor
+    msgFromClient=input("\nDificultad: ")  # Elije las coordenadas el cliente
+    bytesToSend = str.encode(msgFromClient) # Pone la dificultad
+    UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
+    os.system ("clear") # Limpia la consola
 
     while(True):
         msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
-        msgRecib=msgFromServer[0].decode('utf-8')   # Mensaje recibido y decodificado
+        msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
         if str(msgRecib)=="p1":     # Si el mensaje recibido es p1, es turno del cliente para jugar
-            msgFromClient=juego.jugadaP1()  # Elije las coordenadas el cliente
+            msgFromClient=input("\nIngrese las coordenadas donde desea tirar: ")  # Elije las coordenadas el cliente
             bytesToSend = str.encode(msgFromClient) # Codifica las coordenadas
             UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
             os.system ("clear") # Limpia la consola

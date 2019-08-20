@@ -7,8 +7,9 @@ from gato import *
 HOST = "10.100.66.254"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 bufferSize = 1024
+juego=0
+dif=0
 seguir=True
-juego=Gato()
 sig1=False; sig2=False  # Variables para seguir o no jugando y verificar al ganador
 tirosP1=0; tirosP2=0    # Numero de tiros que lleva cada jugador
 
@@ -18,10 +19,17 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     print("Servidor UDP a la escucha")
 
     # Listen for incoming datagrams
-    msgFromServer = "Bienvenido al juego de gato\n"
-    bytesToSend = str.encode(msgFromServer)
+    msgFromServer = "Bienvenido al juego de gato\nElige la dificultad del juego\n1. Principiante\n2. Avanzado"
+    bytesToSend = str.encode(msgFromServer) # Codifica mensaje
     data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
+    print("\nMensaje del cliente: "+str(data.decode()))
     UDPServerSocket.sendto(bytesToSend, address) # Manda Mensaje al cliente
+    data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
+    if int(str(data.decode()))==1:
+        dif=3; juego=Gato(dif)
+    elif int(str(data.decode()))==2:
+        dif=5; juego=Gato(dif)
+
 
     while (True):
         print("\nMensaje del cliente: "+str(data.decode()))

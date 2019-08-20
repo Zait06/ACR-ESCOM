@@ -8,8 +8,8 @@ import random as rand
 import os
 
 class Gato:
-    def __init__(self):
-        self.t=np.zeros((3,3),dtype=np.int)     # Matriz inicial de ceros                             # Coordenadas a guardar
+    def __init__(self,tam):
+        self.t=np.zeros((tam,tam),dtype=np.int)     # Matriz inicial de ceros                             # Coordenadas a guardar
         self.xy=[]                              # Coordenadas a guardar en enteros
 
     def bienvenida(self):   # Mensaje de bienvenida
