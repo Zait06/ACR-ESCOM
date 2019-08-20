@@ -38,5 +38,7 @@ with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as UDPClientSocket:
             break
         else:
             print(msgRecib) # Imprime el mensaje recibido
-
+    msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
+    msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
+    print("\tTiempo de juego: "+str(msgRecib))
 print("\t\tFin del juego Dx\n")       
