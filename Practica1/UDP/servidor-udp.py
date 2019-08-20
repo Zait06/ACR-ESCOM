@@ -21,7 +21,7 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     msgFromServer = "Bienvenido al juego de gato\n"
     bytesToSend = str.encode(msgFromServer)
     data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
-    UDPServerSocket.sendto(bytesToSend, address) # Manda Mensaje al cliete
+    UDPServerSocket.sendto(bytesToSend, address) # Manda Mensaje al cliente
 
     while (True):
         print("\nMensaje del cliente: "+str(data.decode()))

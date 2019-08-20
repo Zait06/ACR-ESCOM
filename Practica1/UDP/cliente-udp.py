@@ -4,11 +4,12 @@ import os
 sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
 from gato import *
 
-HOST = "10.100.66.254"  # The server's hostname or IP address
-PORT = 8080  # The port used by the server
+HOST=input("Ingrese la IP del servidor: ")
+PORT=int(input("Ingrese el puerto del servidor: "))
+
 msgFromClient = "Conexion hecha"
 bytesToSend = str.encode(msgFromClient)
-serverAddressPort = ("10.100.66.254", 8080)
+serverAddressPort = (HOST,PORT)
 bufferSize = 1024
 juego=Gato()
 
