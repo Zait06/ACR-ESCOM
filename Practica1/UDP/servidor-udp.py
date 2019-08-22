@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
 from gato import *
 
-HOST = "10.100.66.254"  # The server's hostname or IP address
+HOST = "10.100.68.47"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 bufferSize = 1024
 juego=0
@@ -95,6 +95,6 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     
     timeFin=time.time()
     print("\nMensaje del cliente: "+str(data.decode()))
-    msgFromServer = str(timeFin-timeIni)+" seg."
+    msgFromServer = str(timeFin-timeIni)
     bytesToSend = str.encode(msgFromServer) # Codifica mensaje
     UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que es turno del cliente
