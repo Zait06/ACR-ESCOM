@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
 from gato import *
 
-HOST = "10.100.68.47"  # The server's hostname or IP address
+HOST = "127.0.0.1"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 bufferSize = 1024
 juego=0
@@ -49,6 +49,8 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
 
         if seguir:
 
+            
+
             tirosP1+=1          # Realizada la jugada, se suma un turno
             if tirosP1>=k-1:      # Si el turno supera los 2, se verifica si es candidato a ganar
                 sig1=juego.verifica(1,k)
@@ -56,20 +58,23 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
                 msgFromServer=juego.verGato()   
                 bytesToSend=str.encode(msgFromServer)
                 UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje del tablero al cliente
-                msgFromServer="\n\tEl ganador es el jugador 1!!!\n"
+                msgFromServer="\n\tFelicidades. Usted ha ganado!!!\n"
                 bytesToSend=str.encode(msgFromServer)
                 UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que ha ganado
                 msgFromServer="exit"
                 bytesToSend=str.encode(msgFromServer)
                 UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de la conexión se cierrar
                 break
-            elif not (juego.t==0).all: # si los tiros sobrepasan los 4 turnos, o bien, se llena la matriz, acaba la partida
+            elif juego.empate(): # si los tiros sobrepasan los turnos, o bien, se llena la matriz, acaba la partida
                 msgFromServer=juego.verGato()   
                 bytesToSend=str.encode(msgFromServer)
                 UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje del tablero al cliente
-                msgFromServer="\n\tGato!!!\n"
+                msgFromServer="\n\tGato. Es un empate!!!\n"
                 bytesToSend=str.encode(msgFromServer)
                 UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que es turno del cliente
+                msgFromServer="exit"
+                bytesToSend=str.encode(msgFromServer)
+                UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de la conexión se cierrar
                 break
 
             juego.jugadaP2(k)

@@ -9,7 +9,7 @@ import os
 
 class Gato:
     def __init__(self,tam):
-        self.t=np.zeros((tam,tam),dtype=np.int)     # Matriz inicial de ceros                             # Coordenadas a guardar
+        self.t=np.zeros((tam,tam),dtype=np.int)     # Matriz inicial de ceros
         self.xy=[]                              # Coordenadas a guardar en enteros
 
     def bienvenida(self):   # Mensaje de bienvenida
@@ -68,13 +68,26 @@ class Gato:
         elif (np.diag(np.fliplr(self.t))==gan).all():   # Diagonal inversa
             final=True
         return final  # Devuelve verdadero si es que alguien ganó
-
+    
     def veoCon5(self,gan):
         final=False
+        aux=np.zeros((5,5),dtype=np.int)    # Matriz auxiliar para verificar la diagonal de 5
         for i in range(10):  # Pasa por toda la matriz
             for j in range(5):
                 if (self.t[i,j:j+5]==gan).all():    # Verifica filas completas
                     final=True; break
                 elif (self.t[j:j+5,i]==gan).all():  # Verifica columnas completas
                     final=True; break
+                if i<=5:
+                    aux=self.t[i:i+5,j:j+5]
+                    if (np.diag(aux)==gan).all():
+                        final=True
+                    elif (np.diag(np.fliplr(aux))==gan).all():
+                        final=True
         return final  # Devuelve verdadero si es que alguien ganó
+
+    def empate(self):
+        if (self.t!=0).all():
+            return True
+        else:
+            return False

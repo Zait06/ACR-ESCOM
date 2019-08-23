@@ -21,7 +21,7 @@ with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as UDPClientSocket:
     msgFromClient=input("\nDificultad: ")  # Elije las coordenadas el cliente
     bytesToSend = str.encode(msgFromClient) # Pone la dificultad
     UDPClientSocket.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
-    os.system ("clear") # Limpia la consola
+    os.system("clear") # Limpia la consola
 
     while(True):
         msgFromServer = UDPClientSocket.recvfrom(bufferSize)    # Mensaje recibido del servidor
