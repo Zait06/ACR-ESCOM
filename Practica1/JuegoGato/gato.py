@@ -91,3 +91,12 @@ class Gato:
             return True
         else:
             return False
+
+    def tiempoPartida(self,tiempo): # Mensaje de tiemop
+        mensaje="" 
+        if tiempo<60:   # Si el tiempo es menor a los 60 seg. envia el mensaje
+            mensaje="\tTiempo de juego: {0:.2f} seg.".format(float(tiempo))
+        else:
+            mensaje="\tTiempo de juego: {} min. ".format(int(tiempo/60))
+            mensaje=mensaje+"{} seg.".format(int(tiempo%60))
+        return mensaje

@@ -101,6 +101,6 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     
     timeFin=time.time()
     print("\nMensaje del cliente: "+str(data.decode()))
-    msgFromServer = str(timeFin-timeIni)
-    bytesToSend = str.encode(msgFromServer) # Codifica mensaje
+    msgFromServer = juego.tiempoPartida(timeFin-timeIni) # Codifica mensaje
+    bytesToSend=str.encode(msgFromServer)
     UDPServerSocket.sendto(bytesToSend, address) # Manda mensaje de que es turno del cliente
