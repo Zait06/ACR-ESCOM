@@ -5,7 +5,8 @@ import os
 sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
 from gato import *
 
-HOST = "127.0.0.1"  # The server's hostname or IP address
+# HOST = socket.gethostbyname(socket.gethostname())
+HOST = "192.168.1.66"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 bufferSize = 1024
 juego=0
@@ -17,8 +18,8 @@ timeIni=0; timeFin=0    # Tiempo de inicio y tiempo de fin del juego
 
 with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Abrir conexión
     UDPServerSocket.bind((HOST, PORT))
-
-    print("Servidor UDP a la escucha")
+    
+    print("Servidor UDP a la escucha con direccion IP "+str(HOST))
 
     # Listen for incoming datagrams
     msgFromServer = "Bienvenido al juego de gato\nElige la dificultad del juego\n1. Principiante\n2. Avanzado"
