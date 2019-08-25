@@ -12,18 +12,25 @@ class Gato:
         self.t=np.zeros((3,3),dtype=np.int)     # Matriz inicial de ceros
         self.p=""                               # Coordenadas a guardar
         self.xy=[]                              # Coordenadas a guardar en enteros
+        self.tt=["-"]*4
 
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
 
     def verGato(self):  # Muestra del tablero
-        print(self.t)
+        for i in range(4):
+            tabla=""
+            for j in range(4):
+                tabla=tabla+str(self.tt[i][j])+" "
+            print(tabla)
+
     
     def jugadaP1(self): # Jugada del jugador 1
         self.p=input("\nIngrese las coordenadas donde desea tirar: ")
         self.xy=self.p.split(",")   # Separación del string recibido
         if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
             self.t[int(self.xy[0])][int(self.xy[1])]=1
+            self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="X"
         else:   # Si no es así, ingrese de nuevo otras coordenas
             os.system ("clear")
             print("Lugar ocupado\n")
@@ -35,6 +42,7 @@ class Gato:
         b=rand.randint(0,2)
         if self.t[a][b]==0: # Si está vacío, ingrese el número
             self.t[a][b]=(-1)
+            self.tt[a+1][b+1]="O"
         else:   # Si no, busque otras coordenadas
             self.jugadaP2()
         
@@ -52,9 +60,22 @@ class Gato:
             ganador=True
         return ganador  # Devuelve verdadero si es que alguien ganó
 
+    def llenoTT(self):
+        for i in range(4):
+            self.tt[i]=["-"]*4
+        self.tt[1][0]=0
+        for i in range(3):
+            for j in range(3):
+                if i==0:
+                    self.tt[i][j+1]=j
+                elif j==0:
+                    self.tt[i+1][j]=i
+
+
 sig1=False; sig2=False  # Variables para seguir o no jugando y verificar al ganador
 tirosP1=0; tirosP2=0    # Numero de tiros que lleva cada jugador
 cat=Gato()              # Se crea el objeto Gato llamado cat
+cat.llenoTT()
 cat.bienvenida()        
 while(True):
     cat.verGato()

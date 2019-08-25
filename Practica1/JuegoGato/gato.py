@@ -10,17 +10,32 @@ import os
 class Gato:
     def __init__(self,tam):
         self.t=np.zeros((tam,tam),dtype=np.int)     # Matriz inicial de ceros
-        self.xy=[]                              # Coordenadas a guardar en enteros
+        self.tam=tam                                # Tamaño de la matriz
+        self.xy=[]                                  # Coordenadas a guardar en enteros
+        self.tt=['-']*(tam+1)                           # Matriz de vista
 
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
 
     def verGato(self):  # Muestra del tablero
-        return str(self.t)
+        tabla=""
+        for i in range(self.tam+1):
+            for j in range(self.tam+1):
+                tabla=tabla+str(self.tt[i][j])+" "
+            tabla=tabla+"\n"
+        return tabla
+        # return str(self.t)
     
-    def jugadaP1(self): # Jugada del jugador 1
-        p=input("\nIngrese las coordenadas donde desea tirar: ")
-        return p
+    def llenoTT(self):
+        for i in range(self.tam+1):
+            self.tt[i]=["-"]*(self.tam+1)
+        self.tt[1][0]=0
+        for i in range(self.tam):
+            for j in range(self.tam):
+                if i==0:
+                    self.tt[i][j+1]=j
+                elif j==0:
+                    self.tt[i+1][j]=i
         
     def jugadaP2(self,tam): # Jugada del jugador 2 (maquina)
         if tam==5:
@@ -29,6 +44,7 @@ class Gato:
         b=rand.randint(0,tam-1)
         if self.t[a][b]==0: # Si está vacío, ingrese el número
             self.t[a][b]=(-1)
+            self.tt[a+1][b+1]="O"
         else:   # Si no, busque otras coordenadas
             self.jugadaP2(tam)
         
@@ -51,6 +67,7 @@ class Gato:
         self.xy=coor.split(",")   # Separación del string recibido
         if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
             self.t[int(self.xy[0])][int(self.xy[1])]=tipo
+            self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="X"
             sip=True
         else:
             sip=False
