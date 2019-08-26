@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspo
 from gato import *
 
 # HOST = socket.gethostbyname(socket.gethostname())
-HOST = "192.168.1.66"  # The server's hostname or IP address
+HOST = "10.100.68.47"  # The server's hostname or IP address
 PORT = 8080  # The port used by the server
 bufferSize = 1024
 juego=0
@@ -29,7 +29,7 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     UDPServerSocket.sendto(bytesToSend, address) # Manda Mensaje al cliente
     data,address = UDPServerSocket.recvfrom(bufferSize) # Detecta datos enviados por el cliente
     if int(str(data.decode()))==1:
-        k=3; juego=Gato(k)      # Dif es el valor de 
+        k=3; juego=Gato(k)      # k son las dimensiones
     elif int(str(data.decode()))==2:
         k=5; juego=Gato(k*2)
 
