@@ -12,7 +12,9 @@ class Gato:
         self.t=np.zeros((tam,tam),dtype=np.int)     # Matriz inicial de ceros
         self.tam=tam                                # Tamaño de la matriz
         self.xy=[]                                  # Coordenadas a guardar en enteros
-        self.tt=['-']*(tam+1)                           # Matriz de vista
+        self.tt=['-']*(tam+1)                       # Matriz de vista
+        self.marca=['X','O']                        # Marca de los jugadores
+        self.jugador=[]                             # Lista para guardar el tipo de marca del jugador 1 y 2
 
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
@@ -37,17 +39,6 @@ class Gato:
                 elif j==0:
                     self.tt[i+1][j]=i
         
-    def jugadaP2(self,tam): # Jugada del jugador 2 (maquina)
-        if tam==5:
-            tam=tam*2
-        a=rand.randint(0,tam-1) # Numeros al azar donde poner el número
-        b=rand.randint(0,tam-1)
-        if self.t[a][b]==0: # Si está vacío, ingrese el número
-            self.t[a][b]=(-1)
-            self.tt[a+1][b+1]="O"
-        else:   # Si no, busque otras coordenadas
-            self.jugadaP2(tam)
-        
     def verifica(self,tipo,tam):    # Verifica si hay un ganador
         ganador=False; rango=0
         gan=np.ones((tam),dtype=np.int)  # Hace una copia del vector ganador
@@ -62,12 +53,15 @@ class Gato:
 
         return ganador
 
-    def ocupado(self,coor,tipo):
+    def jugadorPlayer(self,coor,tipo):  # Jugada del 
         sip=False
         self.xy=coor.split(",")   # Separación del string recibido
         if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
             self.t[int(self.xy[0])][int(self.xy[1])]=tipo
-            self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="X"
+            if tipo==1:
+                self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="X"
+            else:
+                self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="O"
             sip=True
         else:
             sip=False
