@@ -13,17 +13,15 @@ sel = selectors.DefaultSelector()
 
 def accept(sock, mask):
     conn, addr = sock.accept()  # Should be ready
-    print('accepted', conn, 'from', addr)
     conn.setblocking(False)
     sel.register(conn, selectors.EVENT_READ, read)
 
 def read(conn, mask):
     data = conn.recv(1000)  # Should be ready
     if data:
-        print('echoing', repr(data), 'to', conn)
-        conn.send(data)  # Hope it won't block
+        print(repr(data)
+        # conn.send(data)  # Hope it won't block
     else:
-        print('closing', conn)
         sel.unregister(conn)
         conn.close()
 
@@ -34,7 +32,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     sel.register(sock, selectors.EVENT_READ, accept)
 
     while True:
-        print("Esperando evento...")
+        # print("Esperando evento...")
         events = sel.select()
         for key, mask in events:
             callback = key.data
