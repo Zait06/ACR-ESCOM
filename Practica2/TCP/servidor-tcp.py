@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 #
-import sys
 import socket
+import time
+import sys
+import os
 import selectors
 import types
+sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
+from gato import *
 #
 sel = selectors.DefaultSelector()
 
