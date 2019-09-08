@@ -1,4 +1,5 @@
 import socket
+import random as rand
 import sys
 import os
 
@@ -9,18 +10,26 @@ msgFromClient = "Conexion hecha"
 bytesToSend = str.encode(msgFromClient)
 serverAddressPort = (HOST,PORT)
 bufferSize = 1024
+marca=""
 
 
 # Create a UDP socket at client side
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
+    clienteSock.connect((HOST, PORT))
     clienteSock.sendto(bytesToSend, serverAddressPort)  # Manda mensaje al servidor
     msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
+    msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
     os.system ("clear") # Limpia la consola
+
     print(msgFromServer[0].decode())                 # Imprime primer mensaje del servidor
     msgFromClient=input("\nDificultad: ")  # Elije las coordenadas el cliente
     bytesToSend = str.encode(msgFromClient) # Pone la dificultad
     clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
+
+    msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
+    marca=msgFromServer[0].decode()   # Mensaje recibido y decodificado
+
     os.system("clear") # Limpia la consola
 
     while(True):
@@ -37,7 +46,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         elif str(msgRecib)=="exit":
             break
         else:
+            print("\nTu marca es: "+str(marca))
             print(msgRecib) # Imprime el mensaje recibido
+            
     msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
     msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
     print(str(msgRecib))
