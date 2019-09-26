@@ -22,10 +22,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
     msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
     os.system ("clear") # Limpia la consola
 
-    print(msgFromServer[0].decode())                 # Imprime primer mensaje del servidor
-    msgFromClient=input("\nDificultad: ")  # Elije las coordenadas el cliente
-    bytesToSend = str.encode(msgFromClient) # Pone la dificultad
-    clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
+    if msgRecib=="Espere":
+        print(str(msgRecib)+"...")
+        print("Se esta conectando con el jugador 1")
+    else:
+        print(msgFromServer[0].decode())                 # Imprime primer mensaje del servidor
+        msgFromClient=input("\nDificultad: ")  # Elije las coordenadas el cliente
+        bytesToSend = str.encode(msgFromClient) # Pone la dificultad
+        clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
 
     msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
     marca=msgFromServer[0].decode()   # Mensaje recibido y decodificado
