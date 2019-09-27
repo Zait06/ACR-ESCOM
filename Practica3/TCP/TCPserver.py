@@ -70,20 +70,20 @@ class Servidor():
         else:
             response = bytes("X", 'ascii')
         conn.sendall(response)
+        logging.debug("Marca enviada")
 
     def recibir_datos(self,conn,addr):
         try:
-            cur_thread=threading.current_thread()
             logging.debug('Iniciando')
             while True:
                 data = conn.recv(1024)
                 print("{} - {}".format(addr, data))
                 if self.flag1 and len(self.jugA)==1:
-                    self.flag1=False; self.lock.acquire()
+                    self.flag1=False;
                     response = bytes("Bienvenido al juego de gato\nElige la dificultad del juego\n1. Principiante\n2. Avanzado", 'ascii')
                     conn.sendall(response)
                 elif str(data.decode())=="1" or str(data.decode())=="2":
-                    self.lock.release(); self.flag2=True
+                    self.flag2=True
                     self.crearJuego(int(data.decode()))
                 elif str(data.decode())=="va":
                     self.mandarMarca(conn,addr)
@@ -97,9 +97,14 @@ class Servidor():
                         time.sleep(1)
                     logging.debug('Podemos continuar')
                     self.flag3=False
-                else:
-                    continue     
+
+                if not data:
+                    print("Conexion cerrada por {}".format(addr))
+                    self.timeFin=time.time()
+                    break 
         except Exception as e:
             print(e)
+        finally:
+            conn.close()
 
 s = Servidor()
