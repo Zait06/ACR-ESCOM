@@ -19,7 +19,8 @@ class Servidor():
         self.jugA=list()
         self.listaConexiones=list()
         self.juego=0; self.k=0
-        self.seguir=False; self.flag1=True; self.flag2=True
+        self.seguir=False; self.numJug=0
+        self.flag1=True; self.flag2=False; self.flag3=True
         self.sig1=False; self.sig2=False
         self.tirosP1=0; self.tirosP2=0    # Numero de tiros que lleva cada jugador
         self.timeIni=0; self.timeFin=0
@@ -42,6 +43,7 @@ class Servidor():
                 print("Conectado a: ", client_addr)
                 listaconexiones.append(client_conn)
                 self.jugA.append(client_addr)
+                self.numJug+=1
                 thread_read=threading.Thread(target=self.recibir_datos,
                                              args=[client_conn, client_addr],
                                              name='Jugador-'+str(self.numJug))
@@ -60,22 +62,43 @@ class Servidor():
             self.k=3; self.juego=Gato(self.k)      # k son las dimensiones
         elif tam==2:
             self.k=5; self.juego=Gato(self.k*2)
+    
+    def mandarMarca(self,conn,addr):
+        logging.debug("Mandando marca")
+        if addr==self.jugA[1]:
+            response = bytes("O", 'ascii')
+        else:
+            response = bytes("X", 'ascii')
+        conn.sendall(response)
 
     def recibir_datos(self,conn,addr):
         try:
             cur_thread=threading.current_thread()
             logging.debug('Iniciando')
-            if self.flag1 and len(self.jugA)==1:
-                self.flag1=False
-                response = bytes("Bienvenido al juego de gato\nElige la dificultad del juego\n1. Principiante\n2. Avanzado", 'ascii')
-                conn.sendall(response)
-            else:
-                response = bytes("Espere", 'ascii')
-                conn.sendall(response)
-                while True:
-                    if self.flag2:
-                        break
-
+            while True:
+                data = conn.recv(1024)
+                print("{} - {}".format(addr, data))
+                if self.flag1 and len(self.jugA)==1:
+                    self.flag1=False; self.lock.acquire()
+                    response = bytes("Bienvenido al juego de gato\nElige la dificultad del juego\n1. Principiante\n2. Avanzado", 'ascii')
+                    conn.sendall(response)
+                elif str(data.decode())=="1" or str(data.decode())=="2":
+                    self.lock.release(); self.flag2=True
+                    self.crearJuego(int(data.decode()))
+                elif str(data.decode())=="va":
+                    self.mandarMarca(conn,addr)
+                elif not self.flag1 and addr==self.jugA[1] and self.flag3:
+                    response = bytes("Espere", 'ascii')
+                    conn.sendall(response)
+                    while True:
+                        if self.flag2:
+                            conn.sendall(bytes("avanza",'ascii'))
+                            break
+                        time.sleep(1)
+                    logging.debug('Podemos continuar')
+                    self.flag3=False
+                else:
+                    continue     
         except Exception as e:
             print(e)
 
