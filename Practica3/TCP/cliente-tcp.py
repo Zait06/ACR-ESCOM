@@ -39,9 +39,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
     bytesToSend = str.encode("va") # Pone la dificultad
     clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
 
-    msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
-    marca=msgFromServer[0].decode()   # Mensaje recibido y decodificado
-
     os.system("clear") # Limpia la consola
 
     while(True):
