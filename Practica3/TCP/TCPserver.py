@@ -30,14 +30,13 @@ class Servidor():
         self.serveraddr = (self.HOST,self.PORT)
         self.jugA=list()
         self.listaConexiones=list()
-        self.juego=0; self.k=0
+        self.juego=object; self.k=0
         self.seguir=False; self.numJug=0
         self.flag1=True; self.flag2=False; self.flag3=True
         self.sig1=False; self.sig2=False
         self.tirosP1=0; self.tirosP2=0    # Numero de tiros que lleva cada jugador
         self.timeIni=0; self.timeFin=0
-        self.TCPServerSocket=0
-        self.control=Counter
+        self.control=Counter()
         self.lock=threading.Lock()
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.TCPServerSocket:
@@ -86,22 +85,24 @@ class Servidor():
             response=bytes("X", 'ascii')
         conn.sendall(response)
         logging.debug("Marca enviada")
-        response=bytes(str(self.juego.verGato()),'ascii')
         time.sleep(2)
-        conn.sendall(response)
 
-    def juguemos(self,conn,addr):
+    def iniJuego(self,conn,addr,c):
+        tablero=self.juego.verGato()
+        response=str.encode(str(tablero))
+        conn.sendall(response)
+        time.sleep(0.5)
         if addr==self.jugA[1]:
             response=bytes("wait",'ascii')
-            bandera=True
         else:
             response=bytes("p1",'ascii')
+        conn.sendall(response)
 
     def recibir_datos(self,conn,addr):
         try:
             logging.debug('Iniciando')
             while True:
-                data = conn.recv(1024)
+                data=conn.recv(1024)
                 print("{} - {}".format(addr, data))
                 if self.flag1 and len(self.jugA)==1:    # Si es el jugador dos, mandará el mensaje
                     self.flag1=False;
@@ -114,7 +115,7 @@ class Servidor():
                     self.crearJuego(int(data.decode()))
                 elif str(data.decode())=="va":  # Mandar Marca
                     self.mandarMarca(conn,addr)
-                    self.juguemos(conn,addr)
+                    self.iniJuego(conn,addr,self.control)
                 elif not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2 manda señal de espera
                     response = bytes("Espere", 'ascii')
                     conn.sendall(response)
@@ -133,6 +134,7 @@ class Servidor():
         except Exception as e:
             print(e)
         finally:
+            self.numJug-=1
             conn.close()
 
 s = Servidor()
