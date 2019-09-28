@@ -37,10 +37,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
 
     bytesToSend = str.encode("va") # Pone la dificultad
-    clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
+    clienteSock.sendto(bytesToSend,serverAddressPort)  # Envia la dificultad
 
-    msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
-    marca=msgFromServer[0].decode()   # Mensaje recibido y decodificado
+    msgFromServer = clienteSock.recvfrom(bufferSize)    # Marca recibida
+    marca=msgFromServer[0].decode()   # Marca decoficada y guarda
 
     os.system("clear") # Limpia la consola
 
@@ -56,7 +56,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
             os.system ("clear")
             print(str(msgRecib)+"\n")
         elif str(msgRecib)=="wait":
-            print("Espera...\nSe esta conectando con el jugador 1")
+            print("Espera...\nEs turno del otro jugador")
         elif str(msgRecib)=="exit":
             break
         else:
