@@ -13,8 +13,8 @@ class Gato:
         self.tam=tam                                # Tamaño de la matriz
         self.xy=[]                                  # Coordenadas a guardar en enteros
         self.tt=['-']*(tam+1)                       # Matriz de vista
+        self.llenoTT()
         self.marca=['X','O']                        # Marca de los jugadores
-        self.jugador=[]                             # Lista para guardar el tipo de marca del jugador 1 y 2
 
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
@@ -25,8 +25,7 @@ class Gato:
             for j in range(self.tam+1):
                 tabla=tabla+str(self.tt[i][j])+" "
             tabla=tabla+"\n"
-        return tabla
-        # return str(self.t)
+        return str(tabla)
     
     def llenoTT(self):
         for i in range(self.tam+1):
