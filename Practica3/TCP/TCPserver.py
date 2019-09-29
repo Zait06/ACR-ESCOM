@@ -7,22 +7,21 @@ import threading
 sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
 from gato import *
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='(%(threadName)-10s) %(message)s',
-)
+logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-10s) %(message)s',)
 
 class Counter(object):
     def __init__(self):
         self.lock = threading.Lock()
 
-    def increment(self):
+    def increment(self,flag=False):
         # logging.debug('Esperando por el candado')
         self.lock.acquire()
         try:
-            logging.debug('Candado adquirido')
+            #logging.debug('Candado adquirido')
+            flag=True
         finally:
             self.lock.release()
+        return flag
 
 class Servidor():
     def __init__(self):
@@ -37,7 +36,6 @@ class Servidor():
         self.tirosP1=0; self.tirosP2=0    # Numero de tiros que lleva cada jugador
         self.timeIni=0; self.timeFin=0
         self.control=Counter()
-        self.lock=threading.Lock()
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.TCPServerSocket:
             self.TCPServerSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -47,6 +45,7 @@ class Servidor():
 
             self.servirPorSiempre(self.TCPServerSocket,self.listaConexiones)
 
+    # Servicio a todos los clientes
     def servirPorSiempre(self,socketTcp,listaconexiones):
         try:
             logging.debug('Esperando a los jugadores')
@@ -64,21 +63,24 @@ class Servidor():
         except Exception as e:
             print(e)
 
+    # Gestion de hilos de conexion
     def gestion_conexiones(self,listaconexiones):
         for conn in listaconexiones:
             if conn.fileno() == -1:
                 listaconexiones.remove(conn)
 
+    # Creacion de juego
     def crearJuego(self,tam):
         if tam==1:
             self.k=3; self.juego=Gato(self.k)      # k son las dimensiones
         elif tam==2:
             self.k=5; self.juego=Gato(self.k*2)
     
+    # Marca del jugador
     def mandarMarca(self,conn,addr):
         bandera=False
         logging.debug("Mandando marca")
-        if addr==self.jugA[1]:
+        if addr==self.jugA[1] and not self.sig2:
             response=bytes("O", 'ascii')
             bandera=True
         else:
@@ -87,16 +89,18 @@ class Servidor():
         logging.debug("Marca enviada")
         time.sleep(2)
 
-    def iniJuego(self,conn,addr,c):
+    def iniJuego(self,conn,addr):
         tablero=self.juego.verGato()
         response=str.encode(str(tablero))
         conn.sendall(response)
-        time.sleep(0.5)
-        if addr==self.jugA[1]:
-            response=bytes("wait",'ascii')
+        if self.jugA[1]==addr:
+            conn.sendall(str.encode("wt"))
+            time.sleep(3)
+            tablero=self.juego.verGato()
+            response=str.encode(str(tablero))
+            conn.sendall(response)
         else:
-            response=bytes("p1",'ascii')
-        conn.sendall(response)
+            conn.sendall(str.encode("p"))
 
     def recibir_datos(self,conn,addr):
         try:
@@ -113,9 +117,9 @@ class Servidor():
                 elif str(data.decode())=="1" or str(data.decode())=="2":    # Creación del juego
                     self.flag2=True
                     self.crearJuego(int(data.decode()))
-                elif str(data.decode())=="va":  # Mandar Marca
-                    self.mandarMarca(conn,addr)
-                    self.iniJuego(conn,addr,self.control)
+                elif str(data.decode())=="va":
+                    self.mandarMarca(conn,addr) # Mandar Marca
+                    self.iniJuego(conn,addr) # Primera jugada
                 elif not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2 manda señal de espera
                     response = bytes("Espere", 'ascii')
                     conn.sendall(response)
@@ -137,4 +141,4 @@ class Servidor():
             self.numJug-=1
             conn.close()
 
-s = Servidor()
+s = Servidor()  # Ejecucion del servidor
