@@ -9,25 +9,11 @@ from gato import *
 
 logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-10s) %(message)s',)
 
-class Counter(object):
-    def __init__(self):
-        self.lock = threading.Lock()
-
-    def increment(self,flag=False):
-        # logging.debug('Esperando por el candado')
-        self.lock.acquire()
-        try:
-            #logging.debug('Candado adquirido')
-            flag=True
-        finally:
-            self.lock.release()
-        return flag
-
 class Servidor():
     def __init__(self):
         self.HOST="127.0.0.1"; self.PORT=8080
         self.serveraddr = (self.HOST,self.PORT)
-        self.jugA=list()
+        self.jugA=list(); self.hilos=list();
         self.listaConexiones=list()
         self.juego=object; self.k=0
         self.seguir=False; self.numJug=0
@@ -35,7 +21,7 @@ class Servidor():
         self.sig1=False; self.sig2=False
         self.tirosP1=0; self.tirosP2=0    # Numero de tiros que lleva cada jugador
         self.timeIni=0; self.timeFin=0
-        self.control=Counter()
+        self.candado=threading.Lock()
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.TCPServerSocket:
             self.TCPServerSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -58,6 +44,7 @@ class Servidor():
                 thread_read=threading.Thread(target=self.recibir_datos,
                                              args=[client_conn, client_addr],
                                              name='Jugador-'+str(self.numJug))
+                self.hilos.append(thread_read)
                 thread_read.start()
                 self.gestion_conexiones(self.listaConexiones)
         except Exception as e:
@@ -101,6 +88,31 @@ class Servidor():
             conn.sendall(response)
         else:
             conn.sendall(str.encode("p"))
+        self.sig1=False; self.sig2=True
+
+    def juegoYo(self,lock):
+        logging.debug('Iniciando')
+        lock.acquire()
+        try:
+            logging.debug('Ocupado')
+        finally:
+            logging.debug('Disponible')
+            lock.release()
+        time.sleep(1)
+
+    def esperoYo(self,lock,hi):
+        logging.debug('Iniciando')
+        bandera=True
+        while bandera:
+            time.sleep(0.5)
+            have_it = lock.acquire(0)
+            try:
+                if have_it:
+                    bandera=False; hi=True
+            finally:
+                if have_it:
+                    lock.release()
+        return hi
 
     def recibir_datos(self,conn,addr):
         try:
@@ -131,6 +143,18 @@ class Servidor():
                     logging.debug('Podemos continuar')
                     self.flag3=False
 
+                final1=self.juego.verifica(1,self.k)
+                final2=self.juego.verifica(-1,self.k)
+                if final1:
+                    logging.debug("Ganador jugador 1")
+                    break
+                elif final2:
+                    logging.debug("Ganador jugador 2")
+                    break
+                elif self.juego.empate():
+                    logging.debug("Empate")
+                    break
+                
                 if not data:
                     print("Conexion cerrada por {}".format(addr))
                     self.timeFin=time.time()
