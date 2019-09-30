@@ -1,9 +1,9 @@
+import threading
 import logging
 import socket
 import time
 import sys
 import os
-import threading
 sys.path.append(os.path.abspath('../JuegoGato'))    # Subir a la capeta correspondiente para poder importar el gato
 from gato import *
 
@@ -64,7 +64,7 @@ class Servidor():
             self.k=5; self.juego=Gato(self.k*2)
         self.jueCreado=True
     
-    # Marca del jugador
+    # Marca del jugador y primer tiro
     def mandarMarca(self,conn,addr):
         tablero=self.juego.verGato()
         logging.debug("Mandando marca y tablero")
@@ -72,20 +72,22 @@ class Servidor():
             response=bytes("O", 'ascii')
             conn.sendall(response)
             response=str.encode(str(tablero))
-            time.sleep(2)
             conn.sendall(response)
-            conn.sendall(str.encode("wt"))
+            time.sleep(2)
+            conn.sendall(bytes("wt", 'ascii'))
+            self.sig2=self.esperoYo(self.candado,self.sig2)
         else:
             response=bytes("X", 'ascii')
             conn.sendall(response)
             response=str.encode(str(tablero))
-            time.sleep(2)
             conn.sendall(response)
-            conn.sendall(str.encode("play"))
+            time.sleep(2)
+            conn.sendall(bytes("play", 'ascii'))
+            self.juegoYo(self.candado,conn)
         logging.debug("Marca y tablero enviadas")
         time.sleep(1)
 
-    def juegoYo(self,lock):
+    def juegoYo(self,lock,conn):
         logging.debug('Iniciando')
         lock.acquire()
         try:
@@ -104,6 +106,7 @@ class Servidor():
             try:
                 if have_it:
                     bandera=False; tur=True
+                    logging.debug('Obtenido')
             finally:
                 if have_it:
                     lock.release()
@@ -126,8 +129,7 @@ class Servidor():
                     self.flag2=True
                     self.crearJuego(int(data.decode()))
                 elif str(data.decode())=="va":
-                    self.mandarMarca(conn,addr) # Mandar Marca
-
+                    self.mandarMarca(conn,addr) # Mandar Marca                    
 
                 if len(self.jugA)>1:
                     if not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2, manda señal de espera
