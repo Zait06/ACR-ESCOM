@@ -66,30 +66,24 @@ class Servidor():
     
     # Marca del jugador
     def mandarMarca(self,conn,addr):
-        bandera=False
-        logging.debug("Mandando marca")
+        tablero=self.juego.verGato()
+        logging.debug("Mandando marca y tablero")
         if addr==self.jugA[1] and not self.sig2:
             response=bytes("O", 'ascii')
-            bandera=True
+            conn.sendall(response)
+            response=str.encode(str(tablero))
+            time.sleep(2)
+            conn.sendall(response)
+            conn.sendall(str.encode("wt"))
         else:
             response=bytes("X", 'ascii')
-        conn.sendall(response)
-        logging.debug("Marca enviada")
-        time.sleep(2)
-
-    def iniJuego(self,conn,addr):
-        tablero=self.juego.verGato()
-        response=str.encode(str(tablero))
-        conn.sendall(response)
-        if self.jugA[1]==addr:
-            conn.sendall(str.encode("wt"))
-            time.sleep(3)
-            tablero=self.juego.verGato()
-            response=str.encode(str(tablero))
             conn.sendall(response)
-        else:
-            conn.sendall(str.encode("p"))
-        self.sig1=False; self.sig2=True
+            response=str.encode(str(tablero))
+            time.sleep(2)
+            conn.sendall(response)
+            conn.sendall(str.encode("play"))
+        logging.debug("Marca y tablero enviadas")
+        time.sleep(1)
 
     def juegoYo(self,lock):
         logging.debug('Iniciando')
@@ -133,17 +127,19 @@ class Servidor():
                     self.crearJuego(int(data.decode()))
                 elif str(data.decode())=="va":
                     self.mandarMarca(conn,addr) # Mandar Marca
-                    self.iniJuego(conn,addr) # Primera jugada
-                elif not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2, manda señal de espera
-                    response = bytes("Espere", 'ascii')
-                    conn.sendall(response)
-                    while True:
-                        if self.flag2:
-                            conn.sendall(bytes("avanza",'ascii'))
-                            break
-                        time.sleep(1)
-                    logging.debug('Podemos continuar')
-                    self.flag3=False
+
+
+                if len(self.jugA)>1:
+                    if not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2, manda señal de espera
+                        response = bytes("Espere", 'ascii')
+                        conn.sendall(response)
+                        while True:
+                            if self.flag2:
+                                conn.sendall(bytes("avanza",'ascii'))
+                                break
+                            time.sleep(1)
+                        logging.debug('Podemos continuar')
+                        self.flag3=False
 
                 if self.jueCreado:
                     final1=self.juego.verifica(1,self.k)
