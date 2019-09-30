@@ -60,12 +60,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
             time.sleep(1)
         elif str(msgRecib)=="exit":
             break
-        elif msgRecib:
+        else:
             os.system("clear")
             print("\nTu marca es: {}\n".format(marca))
             print(msgRecib) # Imprime el mensaje recibido
-        if not msgFromServer:
-            break
+            time.sleep(1.5)
             
     msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
     msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
