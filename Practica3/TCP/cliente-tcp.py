@@ -47,7 +47,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
     while(True):
         msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
         msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
-        if str(msgRecib)=="p":     # Si el mensaje recibido es p1, es turno del cliente para jugar
+        if str(msgRecib)=="play":     # Si el mensaje recibido es p1, es turno del cliente para jugar
             msgFromClient=input("\nIngrese las coordenadas donde desea tirar: ")  # Elije las coordenadas el cliente
             bytesToSend = str.encode(msgFromClient) # Codifica las coordenadas
             clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
@@ -60,10 +60,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
             time.sleep(1)
         elif str(msgRecib)=="exit":
             break
-        else:
+        elif msgRecib:
             os.system("clear")
             print("\nTu marca es: {}\n".format(marca))
             print(msgRecib) # Imprime el mensaje recibido
+        if not msgFromServer:
+            break
             
     msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
     msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
