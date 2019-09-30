@@ -12,14 +12,13 @@ logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-10s) %(message)s
 class Servidor():
     def __init__(self):
         self.HOST="127.0.0.1"; self.PORT=8080
-        self.serveraddr = (self.HOST,self.PORT)
+        self.serveraddr=(self.HOST,self.PORT)
         self.jugA=list(); self.hilos=list();
         self.listaConexiones=list()
-        self.juego=object; self.k=0
+        self.juego=object; self.k=0; self.bandera=True
         self.jueCreado=False; self.numJug=0
         self.flag1=True; self.flag2=False; self.flag3=True
         self.sig1=False; self.sig2=False
-        self.tirosP1=0; self.tirosP2=0    # Numero de tiros que lleva cada jugador
         self.timeIni=0; self.timeFin=0
         self.candado=threading.Lock()
 
@@ -66,6 +65,7 @@ class Servidor():
     
     # Marca del jugador y primer tiro
     def mandarMarca(self,conn,addr):
+        self.timeIni=time.time()
         tablero=self.juego.verGato()
         logging.debug("Mandando marca y tablero")
         if addr==self.jugA[1] and not self.sig2:
@@ -81,24 +81,25 @@ class Servidor():
             conn.sendall(response)
             response=str.encode(str(tablero))
             conn.sendall(response)
-            time.sleep(2)
+            time.sleep(1)
             conn.sendall(bytes("play", 'ascii'))
             self.juegoYo(self.candado,conn)
         logging.debug("Marca y tablero enviadas")
         time.sleep(1)
 
     def juegoYo(self,lock,conn):
-        logging.debug('Iniciando')
+        logging.debug('Candado iniciando')
         lock.acquire()
-        try:
-            logging.debug('Ocupado')
-        finally:
-            logging.debug('Disponible')
-            lock.release()
+        logging.debug('Candado ocupado')
         time.sleep(1)
+    
+    def libera(self,lock):
+        if not self.bandera:
+            logging.debug('Candado disponible')
+            lock.release()
 
     def esperoYo(self,lock,tur):
-        logging.debug('Iniciando')
+        logging.debug('Espera inicianda')
         bandera=True
         while bandera:
             time.sleep(0.5)
@@ -106,16 +107,17 @@ class Servidor():
             try:
                 if have_it:
                     bandera=False; tur=True
-                    logging.debug('Obtenido')
+                    logging.debug('Candado obtenido')
             finally:
                 if have_it:
+                    logging.debug('Esperando tiro')
                     lock.release()
         return tur
 
     def recibir_datos(self,conn,addr):
         conteo=0;
         try:
-            logging.debug('Iniciando')
+            logging.debug('Jugador iniciando')
             while True:
                 data=conn.recv(1024)
                 print("{} - {}".format(addr, data))
@@ -129,8 +131,14 @@ class Servidor():
                     self.flag2=True
                     self.crearJuego(int(data.decode()))
                 elif str(data.decode())=="va":
-                    self.mandarMarca(conn,addr) # Mandar Marca                    
-
+                    self.mandarMarca(conn,addr) # Mandar Marca
+                elif data and addr==self.jugA[0]:
+                    self.bandera=False
+                    self.libera(self.candado)
+                elif data and addr==self.jugA[1]:
+                    self.bandera=False
+                    self.libera(self.candado)
+                
                 if len(self.jugA)>1:
                     if not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2, manda señal de espera
                         response = bytes("Espere", 'ascii')
