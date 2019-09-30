@@ -16,7 +16,7 @@ class Servidor():
         self.jugA=list(); self.hilos=list();
         self.listaConexiones=list()
         self.juego=object; self.k=0
-        self.seguir=False; self.numJug=0
+        self.jueCreado=False; self.numJug=0
         self.flag1=True; self.flag2=False; self.flag3=True
         self.sig1=False; self.sig2=False
         self.tirosP1=0; self.tirosP2=0    # Numero de tiros que lleva cada jugador
@@ -62,6 +62,7 @@ class Servidor():
             self.k=3; self.juego=Gato(self.k)      # k son las dimensiones
         elif tam==2:
             self.k=5; self.juego=Gato(self.k*2)
+        self.jueCreado=True
     
     # Marca del jugador
     def mandarMarca(self,conn,addr):
@@ -100,7 +101,7 @@ class Servidor():
             lock.release()
         time.sleep(1)
 
-    def esperoYo(self,lock,hi):
+    def esperoYo(self,lock,tur):
         logging.debug('Iniciando')
         bandera=True
         while bandera:
@@ -108,13 +109,14 @@ class Servidor():
             have_it = lock.acquire(0)
             try:
                 if have_it:
-                    bandera=False; hi=True
+                    bandera=False; tur=True
             finally:
                 if have_it:
                     lock.release()
-        return hi
+        return tur
 
     def recibir_datos(self,conn,addr):
+        conteo=0;
         try:
             logging.debug('Iniciando')
             while True:
@@ -132,7 +134,7 @@ class Servidor():
                 elif str(data.decode())=="va":
                     self.mandarMarca(conn,addr) # Mandar Marca
                     self.iniJuego(conn,addr) # Primera jugada
-                elif not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2 manda señal de espera
+                elif not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2, manda señal de espera
                     response = bytes("Espere", 'ascii')
                     conn.sendall(response)
                     while True:
@@ -143,18 +145,20 @@ class Servidor():
                     logging.debug('Podemos continuar')
                     self.flag3=False
 
-                final1=self.juego.verifica(1,self.k)
-                final2=self.juego.verifica(-1,self.k)
-                if final1:
-                    logging.debug("Ganador jugador 1")
-                    break
-                elif final2:
-                    logging.debug("Ganador jugador 2")
-                    break
-                elif self.juego.empate():
-                    logging.debug("Empate")
-                    break
+                if self.jueCreado:
+                    final1=self.juego.verifica(1,self.k)
+                    final2=self.juego.verifica(-1,self.k)
+                    if final1 and conteo>2:
+                        logging.debug("Ganador jugador 1")
+                        break
+                    elif final2 and conteo>2:
+                        logging.debug("Ganador jugador 2")
+                        break
+                    elif self.juego.empate() and conteo>2:
+                        logging.debug("Empate")
+                        break
                 
+                conteo+=1
                 if not data:
                     print("Conexion cerrada por {}".format(addr))
                     self.timeFin=time.time()

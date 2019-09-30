@@ -15,12 +15,13 @@ class Gato:
         self.tt=['-']*(tam+1)                       # Matriz de vista
         self.marca=['X','O']                        # Marca de los jugadores
         self.jugador=[]                             # Lista para guardar el tipo de marca del jugador 1 y 2
+        self.llenoTT()                              # Llena el gato de la vista del usuario
 
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
 
     def verGato(self):  # Muestra del tablero
-        tabla=""
+        tabla="\n"
         for i in range(self.tam+1):
             for j in range(self.tam+1):
                 tabla=tabla+str(self.tt[i][j])+" "

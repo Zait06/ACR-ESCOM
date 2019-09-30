@@ -9,7 +9,7 @@ sel = selectors.DefaultSelector()
 
 def accept(sock, mask):
     conn, addr = sock.accept()  # Should be ready
-    #print('accepted', conn, 'from', addr)
+    print('accepted', conn, 'from', addr)
     conn.setblocking(False)
     sel.register(conn, selectors.EVENT_READ, read)
 

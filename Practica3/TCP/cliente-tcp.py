@@ -1,5 +1,6 @@
-import socket
 import random as rand
+import socket
+import time
 import sys
 import os
 
@@ -11,7 +12,6 @@ bytesToSend = str.encode(msgFromClient)
 serverAddressPort = (HOST,PORT)
 bufferSize = 1024
 marca=""
-
 
 # Create a UDP socket at client side
 
@@ -37,7 +37,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
 
     bytesToSend = str.encode("va") # Pone la dificultad
-    clienteSock.sendto(bytesToSend,serverAddressPort)  # Envia la dificultad
+    clienteSock.sendto(bytesToSend, serverAddressPort)  # Manda mensaje al servidor
 
     msgFromServer = clienteSock.recvfrom(bufferSize)    # Marca recibida
     marca=msgFromServer[0].decode()   # Marca decoficada y guarda
@@ -57,6 +57,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
             print(str(msgRecib)+"\n")
         elif str(msgRecib)=="wt":
             print("Espera...\nEs turno del otro jugador")
+            time.sleep(1)
         elif str(msgRecib)=="exit":
             break
         else:

@@ -33,8 +33,6 @@ with  socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as UDPServerSocket:  # Ab
     elif int(str(data.decode()))==2:
         k=5; juego=Gato(k*2)
 
-    juego.llenoTT()     # Llena el gato de la vista del usuario
-
     timeIni=time.time()
     while (True):
         print("\nMensaje del cliente: "+str(data.decode()))
