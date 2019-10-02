@@ -148,10 +148,9 @@ class Servidor():
                     self.mandarMarca(conn,addr) # Mandar Marca
                 elif conteo>2 and self.jeje:
                     self.bandera=False
-                    self.jeje=False
                     if addr==self.jugA[0]:
                         self.libera(self.candado)
-                        self.sig2=True
+                        self.sig2=True; self.jeje=False
                     elif addr==self.jugA[1]:
                         self.libera(self.candado)
                     
