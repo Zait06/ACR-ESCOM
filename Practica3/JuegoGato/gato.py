@@ -52,7 +52,7 @@ class Gato:
 
         return ganador
 
-    def jugadorPlayer(self,coor,tipo):  # Jugada del 
+    def jugadorPlay(self,coor,tipo):  # Jugada del 
         sip=False
         self.xy=coor.split(",")   # Separación del string recibido
         if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
