@@ -5,7 +5,7 @@ import sys
 import os
 
 os.system("clear")
-HOST=input("Ingrese la IP del servidor: ")
+HOST=input("\nIngrese la IP del servidor: ")
 PORT=int(input("Ingrese el puerto del servidor: "))
 
 msgFromClient = "Conexion hecha"
