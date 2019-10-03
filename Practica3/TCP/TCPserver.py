@@ -16,16 +16,17 @@ class Servidor():
         self.jugA=list(); self.hilos=list();
         self.listaConexiones=list()
         self.juego=object; self.k=0; self.bandera=True
-        self.jueCreado=False; self.numJug=0
+        self.jueCreado=False; self.numJug=0; self.mandaFirst=0
         self.flag1=True; self.flag2=False; self.flag3=True
-        self.sig1=False; self.sig2=False; self.jeje=True
-        self.timeIni=0; self.timeFin=0
+        self.sig1=False; self.sig2=False; self.jeje=False
+        self.timeIni=0; self.timeFin=0;
         self.candado=threading.Lock()
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.TCPServerSocket:
             self.TCPServerSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.TCPServerSocket.bind(self.serveraddr)
             self.TCPServerSocket.listen(2)
+            os.system("clear")
             print("Servidor UDP a la escucha con direccion IP "+str(self.HOST))
 
             self.servirPorSiempre(self.TCPServerSocket,self.listaConexiones)
@@ -89,7 +90,11 @@ class Servidor():
             self.mandarTablero(conn,addr)
             time.sleep(2)
             conn.sendall(bytes("wt", 'ascii'))
-            self.sig2=self.esperoYo(self.candado,self.sig2)
+            self.sig2,self.sig1=self.esperoYo(self.candado,self.sig2,self.sig1)
+            self.mandarTablero(conn,addr)
+            logging.debug("Tablero enviado")
+            self.jeje=True
+            self.mandarTurno(conn)
         else:
             self.juegoYo(self.candado,conn)
             response=bytes("X", 'ascii')
@@ -97,8 +102,8 @@ class Servidor():
             self.mandarTablero(conn,addr)
             time.sleep(2)
             self.mandarTurno(conn)
+            self.jeje=True
             time.sleep(2)
-        logging.debug("Marca y tablero enviadas")
         time.sleep(1)
 
     def juegoYo(self,lock,conn):
@@ -107,12 +112,15 @@ class Servidor():
         logging.debug('Candado ocupado')
         time.sleep(1)
     
-    def libera(self,lock):
-        if not self.bandera:
-            logging.debug('Candado disponible')
-            lock.release()
+    def libera(self,lock,addr):
+        logging.debug('Candado disponible')
+        if addr==self.jugA[0]:
+            self.sig1=False; self.sig2=True
+        else:
+            self.sig1=True; self.sig2=False
+        lock.release()
 
-    def esperoYo(self,lock,tur):
+    def esperoYo(self,lock,tur1,tur2):
         logging.debug('Espera inicianda')
         flag=True
         while flag:
@@ -120,16 +128,18 @@ class Servidor():
             have_it = lock.acquire(0)
             try:
                 if have_it:
-                    flag=False; tur=True
+                    flag=False; tur1=True; tur2=False
                     logging.debug('Candado obtenido')
             finally:
                 if have_it:
+                    logging.debug('Candado iniciado')
                     logging.debug('Esperando tiro')
-                    lock.release()
-        return tur
+                    #lock.release()
+        time.sleep(2)
+        return tur1,tur2
 
     def recibir_datos(self,conn,addr):
-        conteo=0;
+        conteo=0
         try:
             logging.debug('Jugador iniciando')
             while True:
@@ -144,15 +154,43 @@ class Servidor():
                 elif str(data.decode())=="1" or str(data.decode())=="2":    # Creación del juego
                     self.flag2=True
                     self.crearJuego(int(data.decode()))
-                elif str(data.decode())=="va":
-                    self.mandarMarca(conn,addr) # Mandar Marca
-                elif conteo>2 and self.jeje:
-                    self.bandera=False
-                    if addr==self.jugA[0]:
-                        self.libera(self.candado)
-                        self.sig2=True; self.jeje=False
-                    elif addr==self.jugA[1]:
-                        self.libera(self.candado)
+                elif self.mandaFirst<1 and str(data.decode())=="va":    # Primer tiro del juego
+                        self.mandarMarca(conn,addr) # Mandar Marca
+                        self.mandaFirst+=1
+                else:
+                    if self.jueCreado:
+                        if data:
+                            logging.debug("Entrando para liberar")
+                            self.juego.jugadorPlay(str(data.decode()),self.tipoMarca(addr))
+                            self.libera(self.candado,addr)
+                        print(self.juego.t)
+                        logging.debug("sig1="+str(self.sig1)+"\tsig2="+str(self.sig2))
+                        logging.debug("conteo="+str(conteo)+"\tjeje="+str(self.jeje))
+                        time.sleep(2)
+                        logging.debug("sig1="+str(self.sig1)+"\tsig2="+str(self.sig2))
+                        logging.debug("conteo="+str(conteo)+"\tjeje="+str(self.jeje))
+                        if self.sig1 or self.sig2:
+                            time.sleep(2)
+                            self.mandarTablero(conn,addr)
+                            logging.debug("Tablero enviado")
+                            time.sleep(1)
+                            if self.candado.acquire(0):
+                                self.mandarTurno(conn)
+                                logging.debug("turno enviados")
+                            else:
+                                conn.sendall(bytes("wt", 'ascii'))
+                                self.sig1,self.sig2=self.esperoYo(self.candado,self.sig1,self.sig2)
+                        final1=self.juego.verifica(1,self.k)
+                        final2=self.juego.verifica(-1,self.k)
+                        if final1 and conteo>2:
+                            logging.debug("Ganador jugador 1")
+                            break
+                        elif final2 and conteo>2:
+                            logging.debug("Ganador jugador 2")
+                            break
+                        elif self.juego.empate() and conteo>2:
+                            logging.debug("Empate")
+                            break
                     
                 if len(self.jugA)>1:
                     if not self.flag1 and addr==self.jugA[1] and self.flag3:  # Si es el jugador 2, manda señal de espera
@@ -165,34 +203,9 @@ class Servidor():
                             time.sleep(1)
                         logging.debug('Podemos continuar')
                         self.flag3=False
-
-                if self.jueCreado:
-                    if self.sig1 or self.sig2:
-                        self.juego.jugadorPlay(str(data.decode()),self.tipoMarca(addr))
-                        self.mandarTablero(conn,addr)
-                        logging.debug("Tablero enviado")
-                        time.sleep(2)
-                        if not self.sig1 and self.sig2:
-                            if addr==self.jugA[1]:
-                                self.juegoYo(self.candado,conn)
-                                self.mandarTurno(conn)
-                            else:
-                                conn.sendall(bytes("wt", 'ascii'))
-                                self.sig1=self.esperoYo(self.candado,self.sig1)
-                    final1=self.juego.verifica(1,self.k)
-                    final2=self.juego.verifica(-1,self.k)
-                    if final1 and conteo>2:
-                        logging.debug("Ganador jugador 1")
-                        break
-                    elif final2 and conteo>2:
-                        logging.debug("Ganador jugador 2")
-                        break
-                    elif self.juego.empate() and conteo>2:
-                        logging.debug("Empate")
-                        break
-                
                 conteo+=1
                 if not data:
+                    self.candado.release()
                     print("Conexion cerrada por {}".format(addr))
                     self.timeFin=time.time()
                     break 
