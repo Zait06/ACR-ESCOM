@@ -26,22 +26,26 @@ class ActivePool(object):
         
     def makeInactive(self,name,fi,juego,k):
         self.active.remove(name)
-        logging.debug('Ejecutando')
+        logging.debug('Liberando candado')
         acabado=juego.verifica(fi,k)
+        if not acabado:
+            self.libera()
+        return acabado,name
+
+    def libera(self):
         self.lock.release()
-        return acabado
 
 class Servidor():
     def __init__(self):
-        self.HOST="127.0.0.1"; self.PORT=8080
+        self.HOST="192.168.1.66"; self.PORT=8080
         self.serveraddr=(self.HOST,self.PORT)
         self.jugA=list(); self.hilos=list();
         self.listaConexiones=list()
-        self.juego=object; self.k=0;
+        self.juego=object; self.k=0; self.fin=False
         self.jueCreado=False; self.numJug=0;
         self.timeIni=0; self.timeFin=0; self.hayGanador=False
         self.marcas=list(); self.numPlay=0  # marcas=Marca de los jugadores; numPlay=numero de jugadores 
-        self.pool=ActivePool()
+        self.pool=ActivePool(); self.ganador=""
         self.sema=threading.Semaphore(1)
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as self.TCPServerSocket:
@@ -97,6 +101,10 @@ class Servidor():
         self.hilos.append(thread_read)
         conn.sendall(str.encode("cho"))
         self.numPlay=int(conn.recv(1024).decode())
+        for i in range(self.numPlay):
+            self.marcas.append("-")
+        m=str(conn.recv(1024).decode())
+        self.marcas[0]=m
         logging.debug("Jugadores: "+str(self.numPlay))
         response=bytes("Bienvenido al juego de gato\n"+
                         "Elige la dificultad del juego\n"+
@@ -114,6 +122,7 @@ class Servidor():
         while True:
             if len(self.hilos)==self.numPlay and self.jueCreado:
                 logging.debug("Hecho, creando jugadores.")
+                self.timeIni=time.time()
                 for t in self.hilos:
                     self.juego.marcas.append("-")
                     t.start()
@@ -127,12 +136,15 @@ class Servidor():
                                         name='Jugador-'+str(num))
         self.hilos.append(thread_read)
         conn.sendall(str.encode("Espere"))
+        dato=conn.recv(1024)
+        m=str(dato.decode())
+        logging.debug("Podemos continuar")
         while True: 
-            if len(self.hilos)==self.numPlay and self.jueCreado:
+            if len(self.hilos)==self.numPlay: #and self.jueCreado:
+                self.marcas[num-1]=m
                 conn.sendall(str.encode("gogo"))
                 break
             time.sleep(1)
-        logging.debug("Podemos continuar")
 
     def mandarTablero(self,conn):
         tablero=self.juego.verGato()
@@ -141,35 +153,42 @@ class Servidor():
 
     def recibir_datos(self,fi,conn,addr,pool,s):
         logging.debug('Creado')
-        data=conn.recv(1024)
-        m=str(data.decode())
-        self.juego.marcas[fi]=m
+        self.juego.marcas=self.marcas
         try:
             time.sleep(1)
             self.mandarTablero(conn)
-            time.sleep(1)
+            time.sleep(1.5)
             conn.sendall(str.encode("wt"))
             while not self.hayGanador:
                 logging.debug("Espero turno")
                 time.sleep(1)
                 with s:
-                    self.mandarTablero(conn)
-                    name=threading.currentThread().getName()
-                    time.sleep(1)
-                    pool.makeActive(name,conn,fi,self.juego)
-                    time.sleep(1)
-                    for i in self.listaConexiones:
-                        self.mandarTablero(i)
+                    if not self.hayGanador:
+                        self.mandarTablero(conn)
+                        name=threading.currentThread().getName()
                         time.sleep(1)
-                        i.sendall(str.encode("wt"))
+                        pool.makeActive(name,conn,fi,self.juego)
+                        time.sleep(1)
+                        self.hayGanador,self.ganador=pool.makeInactive(name,fi,self.juego,self.k)
+                        for i in self.listaConexiones:
+                            self.mandarTablero(i)
+                            time.sleep(1)
+                            i.sendall(str.encode("wt"))
+                    elif self.hayGanador and not self.fin:
+                        time.sleep(1)
+                        i.sendall(str.encode("exit"))
+                        time.sleep(1)
+                        i.sendall(str.encode("\n\tEl ganador es el {}\n\t\t¡¡Felicidades!!").format(self.ganador))
+                        self.fin=True; pool.libera()
                     time.sleep(1)
-                    self.hayGanador=pool.makeInactive(name,fi,self.juego,self.k)
-                time.sleep(1)
-            print("Conexion cerrada por {}".format(addr))
+            self.timeFin=time.time()
+            lastMsg=self.juego.tiempoPartida(self.timeFin-self.timeIni)
+            conn.sendall(str.encode(lastMasg))
         except Exception as e:
             print(e)
         finally:
-            self.numJug-=1; 
+            self.numJug-=1;
+            print("Conexion cerrada por {}".format(addr))
             conn.close()
 
 s=Servidor()

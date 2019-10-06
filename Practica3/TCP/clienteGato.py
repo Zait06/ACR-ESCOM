@@ -23,6 +23,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
     if msgRecib=="Espere":
         print(str(msgRecib)+"...")
         print("Se estan contectando todos los jugadores")
+        marca=input("\nIngrese una marca para identificarse: ")
+        bytesToSend = str.encode(marca) # Codifica marca
+        clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia marca
+        time.sleep(1)
         msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
         msgRecib=msgFromServer[0].decode()
         if str(msgRecib)=="gogo":
@@ -31,6 +35,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         msgFromClient=input("\nNumero de jugadores: ")  # Elije las coordenadas el cliente
         bytesToSend = str.encode(msgFromClient) # Da el numero de jugadores
         clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia el numero de jugadores
+        marca=input("\nIngrese una marca para identificarse: ")
+        bytesToSend = str.encode(marca) # Codifica marca
+        clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia marca
+        time.sleep(1)
         os.system ("clear") # limpia consola
         msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
         msgRecib=msgFromServer[0].decode()   # Mensaje decodificado
@@ -38,12 +46,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         msgFromClient=input("\nDificultad: ")  # Pone la dificultad
         bytesToSend = str.encode(msgFromClient) # Codifica dificultad
         clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
-
-    os.system("clear") # Limpia la consola
-
-    marca=input("Ingrese una marca para identificarse: ")
-    bytesToSend = str.encode(marca) # Codifica dificultad
-    clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia la dificultad
 
     os.system("clear") # Limpia la consola
 
@@ -61,6 +63,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
             print("Espera...\nEs turno de otro jugador")
             time.sleep(1)
         elif str(msgRecib)=="exit":
+            time.sleep(1)
+            msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
+            msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
             break
         else:
             os.system("clear")
