@@ -134,7 +134,7 @@ class Servidor():
             time.sleep(1)
         logging.debug("Podemos continuar")
 
-    def mandarTablero(self,conn,addr):
+    def mandarTablero(self,conn):
         tablero=self.juego.verGato()
         response=str.encode(str(tablero))
         conn.sendall(response)
@@ -145,23 +145,26 @@ class Servidor():
         m=str(data.decode())
         self.juego.marcas[fi]=m
         try:
-            seguir=True
             time.sleep(1)
-            while seguir:
-                self.mandarTablero(conn,addr)
+            self.mandarTablero(conn)
+            time.sleep(1)
+            conn.sendall(str.encode("wt"))
+            while not self.hayGanador:
                 logging.debug("Espero turno")
                 time.sleep(1)
                 with s:
-                    self.mandarTablero(conn,addr)
+                    self.mandarTablero(conn)
                     name=threading.currentThread().getName()
                     time.sleep(1)
                     pool.makeActive(name,conn,fi,self.juego)
                     time.sleep(1)
+                    for i in self.listaConexiones:
+                        self.mandarTablero(i)
+                        time.sleep(1)
+                        i.sendall(str.encode("wt"))
+                    time.sleep(1)
                     self.hayGanador=pool.makeInactive(name,fi,self.juego,self.k)
                 time.sleep(1)
-                if self.hayGanador:
-                    break
-            time.sleep(2)
             print("Conexion cerrada por {}".format(addr))
         except Exception as e:
             print(e)

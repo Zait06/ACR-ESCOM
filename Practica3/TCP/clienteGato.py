@@ -22,7 +22,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
 
     if msgRecib=="Espere":
         print(str(msgRecib)+"...")
-        print("Se esta conectando con el jugador 1")
+        print("Se estan contectando todos los jugadores")
         msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
         msgRecib=msgFromServer[0].decode()
         if str(msgRecib)=="gogo":
@@ -51,15 +51,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         msgFromServer = clienteSock.recvfrom(bufferSize)    # Mensaje recibido del servidor
         msgRecib=msgFromServer[0].decode()   # Mensaje recibido y decodificado
         if str(msgRecib)=="play":     # Si el mensaje recibido es p1, es turno del cliente para jugar
-            msgFromClient=input("\nIngrese las coordenadas donde desea tirar: ")  # Elije las coordenadas el cliente
+            msgFromClient=input("Su turno.\nIngrese las coordenadas donde desea tirar: ")  # Elije las coordenadas el cliente
             bytesToSend = str.encode(msgFromClient) # Codifica las coordenadas
             clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
-            os.system ("clear") # Limpia la consola
         elif str(msgRecib)=="Lugar ocupado":    # Si el lugar está ocupado, le avisa al cliente
             os.system ("clear")
             print(str(msgRecib)+"\n")
         elif str(msgRecib)=="wt":
-            print("Espera...\nEs turno del otro jugador")
+            print("Espera...\nEs turno de otro jugador")
             time.sleep(1)
         elif str(msgRecib)=="exit":
             break
