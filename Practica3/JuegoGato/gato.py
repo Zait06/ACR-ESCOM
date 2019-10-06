@@ -8,13 +8,14 @@ import random as rand
 import os
 
 class Gato:
-    def __init__(self,tam):
+    def __init__(self,tam,numPlay):
         self.t=np.zeros((tam,tam),dtype=np.int)     # Matriz inicial de ceros
         self.tam=tam                                # Tamaño de la matriz
         self.xy=[]                                  # Coordenadas a guardar en enteros
         self.tt=['-']*(tam+1)                       # Matriz de vista
-        self.llenoTT()
-        self.marca=['X','O']                        # Marca de los jugadores
+        self.llenoTT()                              # Crear tablero visual
+        self.marcas=list()                          # Marca de los jugadores
+        self.numPlayers=numPlay                     # Numero de jugadores
 
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
