@@ -20,6 +20,9 @@ class Gato:
     def bienvenida(self):   # Mensaje de bienvenida
         print("Bienvenido al juego de gato\n")
 
+    def doyMarcas(self,dato):
+        self.marcas=dato
+
     def verGato(self):  # Muestra del tablero
         tabla=""
         for i in range(self.tam+1):
@@ -43,8 +46,7 @@ class Gato:
         ganador=False; rango=0
         gan=np.ones((tam),dtype=np.int)  # Hace una copia del vector ganador
         
-        if tipo==(-1):                # Si es el jugador 2, lo verifica con -1
-            gan=gan*-1
+        gan=gan*(tipo+1)
         
         if tam==3:
             ganador=self.veoCon3(gan)
@@ -57,11 +59,8 @@ class Gato:
         sip=False
         self.xy=coor.split(",")   # Separación del string recibido
         if self.t[int(self.xy[0])][int(self.xy[1])]==0: # Si es que la casilla está vacía, ingrese el numero
-            self.t[int(self.xy[0])][int(self.xy[1])]=tipo
-            if tipo==1:
-                self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="X"
-            else:
-                self.tt[int(self.xy[0])+1][int(self.xy[1])+1]="O"
+            self.t[int(self.xy[0])][int(self.xy[1])]=(tipo+1)
+            self.tt[int(self.xy[0])+1][int(self.xy[1])+1]=self.marcas[tipo]
             sip=True
         else:
             sip=False

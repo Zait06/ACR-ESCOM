@@ -15,15 +15,21 @@ class ActivePool(object):
         self.active = []
         self.lock = threading.Lock()
 
-    def makeActive(self, name):
+    def makeActive(self,name,conn,fi,juego):
         self.lock.acquire()
         self.active.append(name)
-        logging.debug('Ejecutando: %s', self.active)
+        logging.debug('Ejecutando')
+        conn.sendall(str.encode("play"))
+        dato=conn.recv(1024)
+        logging.debug(str(dato.decode()))
+        juego.jugadorPlay(str(dato.decode()),fi)
         
-    def makeInactive(self, name):
-        self.lock.release()
+    def makeInactive(self,name,fi,juego,k):
         self.active.remove(name)
-        logging.debug('Ejecutando: %s', self.active)
+        logging.debug('Ejecutando')
+        acabado=juego.verifica(fi,k)
+        self.lock.release()
+        return acabado
 
 class Servidor():
     def __init__(self):
@@ -33,9 +39,8 @@ class Servidor():
         self.listaConexiones=list()
         self.juego=object; self.k=0;
         self.jueCreado=False; self.numJug=0;
-        self.sig1=False; self.sig2=False;
         self.timeIni=0; self.timeFin=0; self.hayGanador=False
-        self.marcas=list(); self.numPlay=0
+        self.marcas=list(); self.numPlay=0  # marcas=Marca de los jugadores; numPlay=numero de jugadores 
         self.pool=ActivePool()
         self.sema=threading.Semaphore(1)
 
@@ -98,18 +103,19 @@ class Servidor():
                         "1. Principiante\n2. Avanzado", 'ascii')
         conn.sendall(response)
         tam=conn.recv(1024)
-        if tam==1:
+        if int(tam.decode())==1:
             self.k=3; self.juego=Gato(self.k,self.numPlay)      # k son las dimensiones
-        elif tam==2:
+            self.jueCreado=True
+        elif int(tam.decode())==2:
             self.k=5; self.juego=Gato(self.k*2,self.numPlay)
-        self.jueCreado=True
+            self.jueCreado=True
         logging.debug("Juego creado: "+str(self.jueCreado))
         logging.debug("Tamanio: "+str(len(self.hilos))+" Juego: "+str(self.jueCreado))
         while True:
             if len(self.hilos)==self.numPlay and self.jueCreado:
                 logging.debug("Hecho, creando jugadores.")
                 for t in self.hilos:
-                    self.marcas.append("-")
+                    self.juego.marcas.append("-")
                     t.start()
                 break
             time.sleep(1)
@@ -128,21 +134,34 @@ class Servidor():
             time.sleep(1)
         logging.debug("Podemos continuar")
 
+    def mandarTablero(self,conn,addr):
+        tablero=self.juego.verGato()
+        response=str.encode(str(tablero))
+        conn.sendall(response)
+
     def recibir_datos(self,fi,conn,addr,pool,s):
         logging.debug('Creado')
         data=conn.recv(1024)
         m=str(data.decode())
-        self.marcas[fi]=m
+        self.juego.marcas[fi]=m
         try:
             seguir=True
             time.sleep(1)
             while seguir:
-                with s:
-                    name=threading.currentThread().getName()
-                    pool.makeActive(name)
-                    pool.makeInactive(name)
+                self.mandarTablero(conn,addr)
+                logging.debug("Espero turno")
                 time.sleep(1)
-            time.sleep(1)
+                with s:
+                    self.mandarTablero(conn,addr)
+                    name=threading.currentThread().getName()
+                    time.sleep(1)
+                    pool.makeActive(name,conn,fi,self.juego)
+                    time.sleep(1)
+                    self.hayGanador=pool.makeInactive(name,fi,self.juego,self.k)
+                time.sleep(1)
+                if self.hayGanador:
+                    break
+            time.sleep(2)
             print("Conexion cerrada por {}".format(addr))
         except Exception as e:
             print(e)
