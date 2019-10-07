@@ -1,3 +1,7 @@
+"""
+    Hernández López Ángel Zait
+    Cliente del juego gato
+"""
 import random as rand
 import socket
 import time
