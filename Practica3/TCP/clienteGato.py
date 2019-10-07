@@ -63,7 +63,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
         elif str(msgRecib)=="Lugar ocupado":    # Si el lugar está ocupado, le avisa al cliente
             os.system ("clear")
             print(str(msgRecib)+"\n")
-        elif str(msgRecib)=="wt":
+        elif str(msgRecib)=="wt":   # Espear del turno del jugador actual
             print("Espera...\nEs turno de otro jugador")
             time.sleep(1)
         elif str(msgRecib)=="exit":
