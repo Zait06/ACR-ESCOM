@@ -128,6 +128,7 @@ class Servidor():
             if len(self.hilos)==self.numPlay and self.jueCreado:
                 logging.debug("Hecho, creando jugadores.")
                 self.timeIni=time.time()    # Inicio del juego
+                self.juego.marcas=self.marcas
                 # Inicio de los jugadores y partida
                 for t in self.hilos:
                     self.juego.marcas.append("-")
@@ -159,7 +160,6 @@ class Servidor():
 
     def recibir_datos(self,fi,conn,addr,pool,s):
         logging.debug('Creado')
-        self.juego.marcas=self.marcas
         try:
             time.sleep(1)
             self.mandarTablero(conn)    # Mandar tablero

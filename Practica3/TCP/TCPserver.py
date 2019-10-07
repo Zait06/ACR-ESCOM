@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-10s) %(message)s
 
 class Servidor():
     def __init__(self):
-        self.HOST="127.0.0.1"; self.PORT=8080
+        self.HOST="10.100.76.246"; self.PORT=8080
         self.serveraddr=(self.HOST,self.PORT)
         self.jugA=list(); self.hilos=list();
         self.listaConexiones=list()

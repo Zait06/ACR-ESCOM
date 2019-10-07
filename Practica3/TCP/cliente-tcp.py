@@ -52,7 +52,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as clienteSock:
             msgFromClient=input("\nIngrese las coordenadas donde desea tirar: ")  # Elije las coordenadas el cliente
             bytesToSend = str.encode(msgFromClient) # Codifica las coordenadas
             clienteSock.sendto(bytesToSend, serverAddressPort)  # Envia las coordenadas
-            os.system ("clear") # Limpia la consola
         elif str(msgRecib)=="Lugar ocupado":    # Si el lugar está ocupado, le avisa al cliente
             os.system ("clear")
             print(str(msgRecib)+"\n")
