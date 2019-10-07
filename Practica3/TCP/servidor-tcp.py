@@ -1,3 +1,7 @@
+"""
+    Hernández López Ángel Zait
+    Servidor TCP
+"""
 import threading
 import logging
 import socket
