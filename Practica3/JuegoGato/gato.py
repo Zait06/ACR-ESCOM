@@ -31,7 +31,7 @@ class Gato:
             tabla=tabla+"\n"
         return str(tabla)
     
-    def llenoTT(self):
+    def llenoTT(self):  # Generar tablero
         for i in range(self.tam+1):
             self.tt[i]=["-"]*(self.tam+1)
         self.tt[1][0]=0
