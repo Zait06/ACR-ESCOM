@@ -133,6 +133,7 @@ class Servidor():
                 for t in self.hilos:
                     self.juego.marcas.append("-")
                     t.start()
+                    time.sleep(1)
                 break
             time.sleep(1)
     
