@@ -41,7 +41,7 @@ class ActivePool(object):
 
 class Servidor():
     def __init__(self):
-        self.HOST="192.168.1.66"; self.PORT=8080    # Direccion y puerto del servidor
+        self.HOST="10.100.76.246"; self.PORT=8080    # Direccion y puerto del servidor
         self.serveraddr=(self.HOST,self.PORT)   # Conexion de IP
         self.jugA=list(); self.hilos=list()     # Listas de direccion e hilos de los jugadores
         self.listaConexiones=list()     # Lista de conexiones de los jugadores
