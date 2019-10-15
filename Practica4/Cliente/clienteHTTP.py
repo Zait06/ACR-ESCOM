@@ -15,4 +15,4 @@ while True:
      chunk = r1.read(200)  # 200 bytes
      if not chunk:
           break
-     print(repr(chunk))
+     print(str(chunk.decode()))
