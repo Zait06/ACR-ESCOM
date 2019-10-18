@@ -22,16 +22,15 @@ def aplicarPOST(conn):
      nombre=input("Ingrese un nombre: ")
      apelli=input("Ingrese su apellido: ")
      headers = {'Content-Type':'text/html'}
-     foo = {'nombre':nombre,'apellido':apelli}
-     json_data = json.dumps(foo)
-     conn.request('POST', '/', json_data, headers)
+     datoHTML = '<p>A VER QUE PASA</p>'
+     conn.request('POST', '/', datoHTML, headers)
      r = conn.getresponse()
      print(r.status, r.reason)
      print(r.read().decode())
 
 def aplicarPUT(conn):
      print("\n\n--- Metodo PUT ---")
-     conn.request("PUT","/","Metodo PUT")
+     conn.request("PUT","/","Aqui va un texto")
      r=conn.getresponse()
      print(r.status, r.reason)
      print(r.read().decode())
