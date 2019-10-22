@@ -30,7 +30,14 @@ def aplicarPOST(conn):
 
 def aplicarPUT(conn):
      print("\n\n--- Metodo PUT ---")
-     conn.request("PUT","/","Aqui va un texto")
+     conn.request("PUT","/","HOLA",{'Content-Type':'text/plain'})
+     r=conn.getresponse()
+     print(r.status, r.reason)
+     print(r.read().decode())
+
+def aplicarDELETE(conn):
+     print("\n\n--- Metodo DELETE ---")
+     conn.request("DELETE","/","hola.txt",)
      r=conn.getresponse()
      print(r.status, r.reason)
      print(r.read().decode())
@@ -45,7 +52,7 @@ os.system("clear")
 
 if conn:
      while True:
-          metodo=input("\nIngrese el metodo deseado: ")
+          metodo=input("\nhttp> ")
           os.system("clear")
           try:
                if metodo.upper()=='GET':
@@ -56,6 +63,8 @@ if conn:
                     aplicarPOST(conn)
                elif metodo.upper()=='PUT':
                     aplicarPUT(conn)
+               elif metodo.upper()=='DELETE':
+                    aplicarDELETE(conn)
                elif metodo.upper()=='EXIT':
                     break
                else:
