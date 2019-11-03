@@ -1,10 +1,7 @@
 import xmlrpc.client
 import datetime
-s = xmlrpc.client.ServerProxy('http://localhost:8000')  # Quien atiende las solicitudes
 
-print(s.pow(2,3))  # Returns 2**3 = 8
-print(s.add(2,3))  # Returns 5
-print(s.mul(5,2))  # Returns 5*2 = 10
+s = xmlrpc.client.ServerProxy('http://localhost:8000')  # Quien atiende las solicitudes
 
 data = [
     ('boolean', True),
