@@ -2,7 +2,22 @@ import xmlrpc.client
 import datetime
 
 s = xmlrpc.client.ServerProxy('http://localhost:8000')  # Quien atiende las solicitudes
+orden=""; instruc=list()
 
+while True:
+    orden=input("user>> ")
+    instruc=orden.lower().split()
+
+    if instruc[0]=='ls' or instruc[0]=='dir':
+        print(s.verContenido())
+    elif instruc[0]=='mkdir' or instruc[0]=='md':
+        print(s.crearCarpeta(instruc[1]))
+    elif instruc[0]=='pwd':
+        print(s.verDireccion())
+    elif instruc[0]=='exit':
+        break
+
+'''
 data = [
     ('boolean', True),
     ('integer', 1),
@@ -22,3 +37,4 @@ for t, v in data:
 
 # Print list of available methods
 print(s.system.listMethods())
+'''
