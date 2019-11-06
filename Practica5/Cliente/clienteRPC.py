@@ -7,7 +7,6 @@ orden=""; instruc=list()
 
 user=input("Usuario: ")
 pasw=getpass.getpass("Contraseña: ")
-print(pasw)
 ing=s.signIn(user,pasw)
 
 while ing:
@@ -15,12 +14,16 @@ while ing:
     instruc=orden.lower().split()
     
     try:
-        if instruc[0]=='readdir':
-            print(s.verContenido())
-        elif instruc[0]=='mkdir':
-            print(s.crearCarpeta(instruc[1]))
+        if instruc[0]=='null':
+            print(s.hacerPing())
         elif instruc[0]=='create':
             print(s.crearArchivo(instruc[1]))
+        elif instruc[0]=='mkdir':
+            print(s.crearCarpeta(instruc[1]))
+        elif instruc[0]=='rmdir':
+            print(s.borrarCarpeta(instruc[1]))
+        elif instruc[0]=='readdir':
+            print(s.verContenido())
         elif instruc[0]=='pwd':
             print(s.verDireccion())
         elif instruc[0]=='exit':
