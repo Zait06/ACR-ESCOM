@@ -10,11 +10,11 @@ pasw=getpass.getpass("Contraseña: ")
 print(pasw)
 ing=s.signIn(user,pasw)
 
-try:
-    while ing:
-        orden=input("user@"+user+">>")
-        instruc=orden.lower().split()
-
+while ing:
+    orden=input("user@"+user+">>")
+    instruc=orden.lower().split()
+    
+    try:
         if instruc[0]=='readdir':
             print(s.verContenido())
         elif instruc[0]=='mkdir':
@@ -27,9 +27,7 @@ try:
             break
         else:
             print("Instruccion incorrecta, intente de nuevo\n")
-except Exception as e:
-    print(e)
+    except Exception as e:
+        print(e)
 else:
     print("Usuario o contraseña incorrectas")
-finally:
-    print("Adios")
