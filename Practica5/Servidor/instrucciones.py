@@ -35,5 +35,9 @@ class Instrucciones:
         os.mkdir(str(nombre))
         return self.verContenido()
 
+    def borrarCarpeta(self,nombre):
+        os.rmdir(nombre)
+        return self.verContenido()
+
     def copiarArch(self):
         return 'copiado'
