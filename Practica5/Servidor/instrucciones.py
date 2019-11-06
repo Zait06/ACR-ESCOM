@@ -17,6 +17,9 @@ class Instrucciones:
         f.close()
         return simon
 
+    def hacerPing(self):
+        return 'Conectado'
+
     def eleccion(self, inst):
         self.ins=inst.split()
 
