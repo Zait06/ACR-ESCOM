@@ -7,6 +7,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):   # Escucha a todos los solici
 
 # Crea el servidor RPC
 with SimpleXMLRPCServer(('localhost', 8080),requestHandler=RequestHandler) as server:
+    print("Servidor a la escucha")
     server.register_introspection_functions()
 
     server.register_instance(Instrucciones()) # La clase se registra con todos sus metodos de forma xml

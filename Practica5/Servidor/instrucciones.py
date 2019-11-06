@@ -6,6 +6,9 @@ import sys
 os.chdir('user')
 
 class Instrucciones:
+    def __init__(self):
+        self.direc=''
+
     def signIn(self,usua,pasw):
         perfil=list(); simon=False
         f=open("../perfiles.txt","r")
@@ -15,13 +18,11 @@ class Instrucciones:
                 simon=True
                 break
         f.close()
+        self.direc=usua
         return simon
 
     def hacerPing(self):
         return 'Conectado'
-
-    def eleccion(self, inst):
-        self.ins=inst.split()
 
     def verDireccion(self):
         return str(os.getcwd())
@@ -34,6 +35,10 @@ class Instrucciones:
         f.close()
         return self.verContenido()
 
+    def renomCarpeta(self,nom1,nom2):
+        os.rename(nom1,nom2)
+        return self.verContenido()
+
     def crearCarpeta(self,nombre):
         os.mkdir(str(nombre))
         return self.verContenido()
@@ -41,6 +46,3 @@ class Instrucciones:
     def borrarCarpeta(self,nombre):
         os.rmdir(nombre)
         return self.verContenido()
-
-    def copiarArch(self):
-        return 'copiado'
