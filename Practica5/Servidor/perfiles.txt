@@ -1,3 +1,6 @@
 pedro:pedro
 melisa:meli
 Astrid:viviana
+peter:peter
+charly:charly
+Diego:Herrera
