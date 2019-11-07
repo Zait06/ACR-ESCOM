@@ -4,7 +4,7 @@ import time
 os.chdir('user')
 
 class Instrucciones:
-    def signIn(self,usua,pasw):
+    def signIn(self,usua,pasw):                     # Ingresar con un usuario
         perfil=list(); simon=False
         f=open("../perfiles.txt","r")
         for linea in f.readlines():
@@ -15,7 +15,7 @@ class Instrucciones:
         f.close()
         return simon
 
-    def logIn(self,usua,pasw):
+    def logIn(self,usua,pasw):                      # Registrar nuevo usuario
         simon=False
         try:
             with open("../perfiles.txt","a") as f:
