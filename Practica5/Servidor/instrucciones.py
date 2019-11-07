@@ -16,15 +16,18 @@ class Instrucciones:
         return simon
 
     def logIn(self,usua,pasw):
+        simon=False
         try:
             with open("../perfiles.txt","a") as f:
                 f.write(usua+':'+pasw+'\n')
             os.mkdir(usua)
             with open("./"+usua+"/inicio.txt",'w') as f:
                 f.write("Bienvenid@ "+usua+" al servicio RPC")
+            simon=True
         except Exception as e:
             print(e)
-        return True
+            simon=False
+        return simon
 
     def hacerPing(self):                            # null - ping
         return 'Conectado al servidor'
@@ -41,7 +44,6 @@ class Instrucciones:
         envio=str.encode('')
         with open("./"+usua+"/"+arch,"rb") as f:
             for linea in f.readlines():
-                print(linea)
                 envio=envio+linea
         return envio
 
