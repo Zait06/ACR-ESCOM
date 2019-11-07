@@ -3,8 +3,8 @@ import getpass
 import datetime
 import xmlrpc.client
 
-host=sys.argv[1]; port=sys.argv[2]
-addr=host+':'+port
+HOST=sys.argv[1]; PORT=sys.argv[2]
+addr=HOST+':'+PORT
 s = xmlrpc.client.ServerProxy('http://'+addr)  # Quien atiende las solicitudes
 orden=""; instruc=list()
 
