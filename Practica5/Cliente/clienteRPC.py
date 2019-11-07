@@ -21,7 +21,7 @@ else:
 if ing:
     print('\tSesión iniciada\n')
     while True:
-        orden=input("user@"+user+">>")
+        orden=input("user@"+user+">> ")
         instruc=orden.lower().split()
         try:
             if instruc[0]=='null':                                  # Hace un ping con el servidor
