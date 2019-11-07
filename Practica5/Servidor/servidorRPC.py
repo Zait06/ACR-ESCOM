@@ -1,12 +1,15 @@
+import sys
 from instrucciones import *
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
+
+host=sys.argv[1]; port=int(sys.argv[2])
 
 class RequestHandler(SimpleXMLRPCRequestHandler):   # Escucha a todos los solicitantes http
     rpc_paths = ('/RPC2',)  # Ruta principal
 
 # Crea el servidor RPC
-with SimpleXMLRPCServer(('localhost', 8080),requestHandler=RequestHandler) as server:
+with SimpleXMLRPCServer((host,port),requestHandler=RequestHandler) as server:
     print("Servidor a la escucha")
     server.register_introspection_functions()
 
