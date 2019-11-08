@@ -41,7 +41,7 @@ if($ing){
             }
             print($imprimir);
         }catch{ 
-            warn "Algo malo está pasando...";
+            warn "Algo anda mal...";
         }
         
     }
