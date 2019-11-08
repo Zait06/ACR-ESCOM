@@ -9,7 +9,7 @@ s = xmlrpc.client.ServerProxy('http://'+addr)  # Quien atiende las solicitudes
 orden=""; instruc=list()
 
 print("\tSERVICIO RPC")
-nueva=input('Presione [M] si es que cuenta con un perfil, sino,\nprecione [N] para crear una nueva cuenta: ')
+nueva=input('Presione [M] si es que cuenta con un perfil, sino,\npresione [N] para crear una nueva cuenta: ')
 user=input("Usuario: ")
 pasw=getpass.getpass("Contraseña: ")
 
