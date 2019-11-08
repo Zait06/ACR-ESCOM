@@ -28,6 +28,8 @@ if ing:
                 print(s.hacerPing())
             elif instruc[0]=='create':                              # Crear un archivo
                 print(s.crearArchivo(instruc[1],user))
+            elif instruc[0]=='lookup':                              # Busca un directorio
+                print(s.ordenLookUp(user,instruc[1]))
             elif instruc[0]=='read':                                # Lee un archivo
                 print(s.leerArchivo(user,instruc[1]))
             elif instruc[0]=='write':                               # Edita un archivo

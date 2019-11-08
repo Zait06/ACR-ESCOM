@@ -35,6 +35,7 @@ if($ing){
             switch($instruc[0]){
                 case "null"     {$imprimir=$server->call(hacerPing);}
                 case "create"   {$imprimir=$server->call(crearArchivo,$instruc[1],$user);}
+                case "lookup"   {$imprimir=$server->call(ordenLookUp,$user,$instruc[1]);}
                 case "read"     {$imprimir=$server->call(leerArchivo,$user,$instruc[1]);}
                 case "write"    {
                                     print "Ingrese un texto:\n->";
