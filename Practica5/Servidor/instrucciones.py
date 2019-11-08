@@ -35,7 +35,8 @@ class Instrucciones:
     def crearArchivo(self,arch,usua):               # create
         f=open("./"+usua+"/"+arch,"w")
         f.close()
-        return self.verContenido(usua)
+        return 'Hecho'
+        #return self.verContenido(usua)
     
     def ordenLookUp(self,usua,ficha):               # lookup
         return 'Informacion'
