@@ -53,7 +53,7 @@ class Instrucciones:
             f.write(texto+'\n')
         return self.leerArchivo(usua,arch)
 
-    def renomCarpeta(self,nom1,nom2,usua):          # rename
+    def renombrar(self,nom1,nom2,usua):          # rename
         os.rename("./"+usua+"/"+nom1,"./"+usua+"/"+nom2)
         return self.verContenido(usua)
 
