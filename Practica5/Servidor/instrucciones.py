@@ -35,11 +35,10 @@ class Instrucciones:
     def crearArchivo(self,arch,usua):               # create
         f=open("./"+usua+"/"+arch,"w")
         f.close()
-        return 'Hecho'
-        #return self.verContenido(usua)
+        return self.verContenido(usua)
     
     def ordenLookUp(self,usua,ficha):               # lookup
-        return 'Informacion'
+        return self.infoArchivo(ficha,usua)
 
     def leerArchivo(self,usua,arch):                # read
         envio=str.encode('')
@@ -73,7 +72,7 @@ class Instrucciones:
         return str(os.listdir(usua))
 
     def infoArchivo(self,nombre,usua):              # getattr
-        mensaje=nombre
+        mensaje="\t"+nombre
         tama=os.path.getsize("./"+usua+"/"+nombre)
         hora=os.path.getmtime("./"+usua+"/"+nombre)
         mensaje=mensaje+'\n\tFecha de modificado: '+str(time.ctime(hora))
