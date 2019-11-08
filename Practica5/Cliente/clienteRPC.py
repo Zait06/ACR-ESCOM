@@ -34,7 +34,7 @@ if ing:
                 dato=input('Ingrese un texto:\n->')
                 print(s.editarArchivo(user,instruc[1],dato))
             elif instruc[0]=='rename':                              # Cambia nombre al archivo
-                print(s.renomCarpeta(instruc[1],instruc[2],user))
+                print(s.renombrar(instruc[1],instruc[2],user))
             elif instruc[0]=='remove':                              # Elimina un archivo
                 print(s.borrarArchivo(instruc[1],user))
             elif instruc[0]=='mkdir':                               # Crea una carpeta

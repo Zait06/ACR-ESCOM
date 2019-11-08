@@ -34,8 +34,21 @@ if($ing){
         try{
             switch($instruc[0]){
                 case "null"     {$imprimir=$server->call(hacerPing);}
-                case "create"   {$imprimir=$server->call(crearArchivo,$instruc[1],$user)}
+                case "create"   {$imprimir=$server->call(crearArchivo,$instruc[1],$user);}
+                case "read"     {$imprimir=$server->call(leerArchivo,$user,$instruc[1]);}
+                case "write"    {
+                                    print "Ingrese un texto:\n->";
+                                    $dato=<STDIN>;
+                                    $dato=substr($dato,0,(length($dato)-1));
+                                    $imprimir=$server->call(editarArchivo,$user,$instruc[1],$dato);
+                                }
+                case "rename"   {$imprimir=$server->call(renombrar,$instruc[1],$instruc[2],$user);}
+                case "remove"   {$imprimir=$server->call(borrarArchivo,$instruc[1],$user);}
+                case "mkdir"    {$imprimir=$server->call(crearCarpeta,$instruc[1],$user);}
+                case "rmdir"    {$imprimir=$server->call(borrarCarpeta,$instruc[1],$user);}
                 case "readdir"  {$imprimir=$server->call(verContenido,$user);}
+                case "getattr"  {$imprimir=$server->call(infoArchivo,$instruc[1],$user);}
+                case "pwd"      {$imprimir=$server->call(verDireccion,$user);}
                 case "exit"     {$imprimir="\n\t\tHASTA PRONTO ".$user."\n"; $seguir=0;}
                 else            {$imprimir="Instruccion incorrecta, intente de nuevo\n";}
             }
@@ -48,7 +61,3 @@ if($ing){
 }else{
     print "Usuario o contraseña incorrectas";
 }
-
-# Call the remote server and get our result.
-# $result = $server->call('add',3,5);
-# $sum = $result;
