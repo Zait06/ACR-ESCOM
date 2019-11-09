@@ -28,7 +28,7 @@ if ing:
                 print(s.hacerPing())
             elif instruc[0]=='create':                              # Crear un archivo
                 print(s.crearArchivo(instruc[1],user))
-            elif instruc[0]=='lookup':                              # Busca un directorio
+            elif instruc[0]=='lookup':                              # Busca un archivo directorio
                 print(s.ordenLookUp(user,instruc[1]))
             elif instruc[0]=='read':                                # Lee un archivo
                 print(s.leerArchivo(user,instruc[1]))
@@ -47,6 +47,8 @@ if ing:
                 print(s.verContenido(user))
             elif instruc[0]=='getattr':                             # Informacion del archivo
                 print(s.infoArchivo(instruc[1],user))
+            elif instruc[0]=='access':                              # Acceso del usuario
+                print(s.accesoPath(user))
             elif instruc[0]=='pwd':                                 # Direccion del usuario
                 print(s.verDireccion(user))
             elif instruc[0]=='exit':                                # Salir de todo

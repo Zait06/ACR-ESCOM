@@ -2,25 +2,26 @@ use Switch;
 use Try::Catch;
 use Frontier::Client;
 
-# Make an object to represent the XML-RPC server.
-($HOST,$PORT)=@ARGV;
-$addr=$HOST.':'.$PORT;
-$server_url = 'http://'.$addr.'/RPC2';
-$server = Frontier::Client->new(url => $server_url);
+($HOST,$PORT)=@ARGV;                                    # IP y puerto del servidor
+$addr=$HOST.':'.$PORT;                                  # Dirección del servidor
+$server_url = 'http://'.$addr.'/RPC2';                  # Protocolo, direccion, carpeta del servidor
+$server = Frontier::Client->new(url => $server_url);    # Conexión del servidor
 
 # Variables para el usuario, contraseña
 print "Presione [M] si es que cuenta con un perfil, sino,\npresione [N] para crear una nueva cuenta: ";
 $nueva=<STDIN>;
 print "Usuario: "; $user=<STDIN>;
 print "Contraseña: "; $pasw=<STDIN>;
+print "Contraseña: "; $pp=getpass;
+print ($pp); print "\n";
 
-$user=substr($user,0,(length($user)-1));
-$pasw=substr($pasw,0,(length($pasw)-1));
+$user=substr($user,0,(length($user)-1));    # usuario sin '\n'
+$pasw=substr($pasw,0,(length($pasw)-1));    # contraseña sin '\n'
 
 if(uc($nueva)=='M'){
-    $ing=$server->call(signIn,$user,$pasw);
+    $ing=$server->call(signIn,$user,$pasw); # Ingresar con un perfil
 }else{
-    $ing=$server->call(logIn,$user,$pasw);
+    $ing=$server->call(logIn,$user,$pasw);  # Crear un perfil
 }
 
 $seguir=1;
@@ -33,24 +34,25 @@ if($ing){
         @instruc=split(' ',lc($orden));
         try{
             switch($instruc[0]){
-                case "null"     {$imprimir=$server->call(hacerPing);}
-                case "create"   {$imprimir=$server->call(crearArchivo,$instruc[1],$user);}
-                case "lookup"   {$imprimir=$server->call(ordenLookUp,$user,$instruc[1]);}
-                case "read"     {$imprimir=$server->call(leerArchivo,$user,$instruc[1]);}
-                case "write"    {
+                case "null"     {$imprimir=$server->call(hacerPing);}                               # Hace un ping con el servidor
+                case "create"   {$imprimir=$server->call(crearArchivo,$instruc[1],$user);}          # Crea un archivo
+                case "lookup"   {$imprimir=$server->call(ordenLookUp,$user,$instruc[1]);}           # Busca un archivo o directorio
+                case "read"     {$imprimir=$server->call(leerArchivo,$user,$instruc[1]);}           # Lee un archivo
+                case "write"    {                                                                   # Edita un archivo
                                     print "Ingrese un texto:\n->";
                                     $dato=<STDIN>;
                                     $dato=substr($dato,0,(length($dato)-1));
                                     $imprimir=$server->call(editarArchivo,$user,$instruc[1],$dato);
                                 }
-                case "rename"   {$imprimir=$server->call(renombrar,$instruc[1],$instruc[2],$user);}
-                case "remove"   {$imprimir=$server->call(borrarArchivo,$instruc[1],$user);}
-                case "mkdir"    {$imprimir=$server->call(crearCarpeta,$instruc[1],$user);}
-                case "rmdir"    {$imprimir=$server->call(borrarCarpeta,$instruc[1],$user);}
-                case "readdir"  {$imprimir=$server->call(verContenido,$user);}
-                case "getattr"  {$imprimir=$server->call(infoArchivo,$instruc[1],$user);}
-                case "pwd"      {$imprimir=$server->call(verDireccion,$user);}
-                case "exit"     {$imprimir="\n\t\tHASTA PRONTO ".$user."\n"; $seguir=0;}
+                case "rename"   {$imprimir=$server->call(renombrar,$instruc[1],$instruc[2],$user);} # Cambia el nombre al archivo
+                case "remove"   {$imprimir=$server->call(borrarArchivo,$instruc[1],$user);}         # Elimina un archivo
+                case "mkdir"    {$imprimir=$server->call(crearCarpeta,$instruc[1],$user);}          # Crea un directorio
+                case "rmdir"    {$imprimir=$server->call(borrarCarpeta,$instruc[1],$user);}         # Elimina un directorio
+                case "readdir"  {$imprimir=$server->call(verContenido,$user);}                      # Vista de todos los archivos
+                case "getattr"  {$imprimir=$server->call(infoArchivo,$instruc[1],$user);}           # Informacion del archivo
+                case "access"   {$imprimir=$server->call(accesoPath,$user);}                        # Acceso del usuario
+                case "pwd"      {$imprimir=$server->call(verDireccion,$user);}                      # Direccion del usuario
+                case "exit"     {$imprimir="\n\t\tHASTA PRONTO ".$user."\n"; $seguir=0;}            # Salir de todo
                 else            {$imprimir="Instruccion incorrecta, intente de nuevo\n";}
             }
             print($imprimir);
