@@ -12,8 +12,6 @@ print "Presione [M] si es que cuenta con un perfil, sino,\npresione [N] para cre
 $nueva=<STDIN>;
 print "Usuario: "; $user=<STDIN>;
 print "Contraseña: "; $pasw=<STDIN>;
-print "Contraseña: "; $pp=getpass;
-print ($pp); print "\n";
 
 $user=substr($user,0,(length($user)-1));    # usuario sin '\n'
 $pasw=substr($pasw,0,(length($pasw)-1));    # contraseña sin '\n'
