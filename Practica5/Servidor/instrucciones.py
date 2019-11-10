@@ -51,7 +51,7 @@ class Instrucciones:
         with open("./"+usua+"/"+arch,"rb") as f:
             for linea in f.readlines():
                 envio=envio+linea
-        return envio
+        return envio.decode()
 
     def editarArchivo(self,usua,arch,texto):        # write
         with open("./"+usua+"/"+arch,"a") as f:
