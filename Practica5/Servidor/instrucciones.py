@@ -17,10 +17,6 @@ class Instrucciones:
 
     def logIn(self,usua,pasw):                      # Registrar nuevo usuario
         simon=False
-        if usua:
-            print(usua+" - "+pasw)
-        else:
-            print("Que pedo!!!!!")
         try:
             with open("../perfiles.txt","a") as f:  # Abrir archivo para agregar un nuevo miembro
                 f.write(usua+':'+pasw+'\n')
@@ -85,9 +81,9 @@ class Instrucciones:
         mensaje="\t"+nombre
         tama=os.path.getsize("./"+usua+"/"+nombre)
         hora=os.path.getmtime("./"+usua+"/"+nombre)
-        mensaje=mensaje+'\n\tFecha de modificado: '+str(time.ctime(hora))
-        mensaje=mensaje+'\n\tTamaño: '+str(tama)+' bytes'
-        mensaje=mensaje+'\n\t'+os.getcwd()+"/"+usua
+        mensaje+='\n\tFecha de modificado: '+str(time.ctime(hora))
+        mensaje+='\n\tTamaño: '+str(tama)+' bytes'
+        mensaje+='\n\t'+os.getcwd()+"/"+usua
         return mensaje
 
     def accesoPath(self,usua):                      # access
@@ -115,5 +111,5 @@ class Instrucciones:
         }
         texto=""
         for c in coma:
-            texto+=(c+"\t"+coma[c]+"\n")
+            texto+=("\t"c+"\t"+coma[c]+"\n")
         return texto
