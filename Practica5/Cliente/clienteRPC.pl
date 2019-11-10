@@ -14,13 +14,16 @@ $nueva=<STDIN>;
 print "Usuario: "; $user=<STDIN>;
 print "Contraseña: "; $pasw=<STDIN>;
 
-$user=substr($user,0,(length($user)-1));    # usuario sin '\n'
-$pasw=substr($pasw,0,(length($pasw)-1));    # contraseña sin '\n'
+$user=substr($user,0,(length($user)-1));        # usuario sin '\n'
+$pasw=substr($pasw,0,(length($pasw)-1));        # contraseña sin '\n'
+$nueva=uc(substr($nueva,0,(length($nueva)-1))); # nueva sin '\n'
 
-if(uc($nueva)=="M"){
-    $ing=$server->call(signIn,$user,$pasw); # Ingresar con un perfil
-}else{
-    $ing=$server->call(logIn,$user,$pasw);  # Crear un perfil
+print ($nueva."\n");
+
+switch($nueva){
+    case "M"    {$ing=$server->call(signIn,$user,$pasw);}
+    case "N"    {$ing=$server->call(logIn,$user,$pasw);}
+    else        {print "Algo anda mal...\n"; $ing=0;}
 }
 
 $seguir=1;
@@ -58,10 +61,10 @@ if($ing){
             }
             print($imprimir);
         }catch{ 
-            warn "Algo anda mal...";
+            warn "Algo anda mal...\n";
         }
         
     }
 }else{
-    print "Usuario o contraseña incorrectas";
+    print "Usuario o contraseña incorrectas\n";
 }
