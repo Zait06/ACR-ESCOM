@@ -18,11 +18,9 @@ $user=substr($user,0,(length($user)-1));        # usuario sin '\n'
 $pasw=substr($pasw,0,(length($pasw)-1));        # contraseña sin '\n'
 $nueva=uc(substr($nueva,0,(length($nueva)-1))); # nueva sin '\n'
 
-print ($nueva."\n");
-
 switch($nueva){
-    case "M"    {$ing=$server->call(signIn,$user,$pasw);}
-    case "N"    {$ing=$server->call(logIn,$user,$pasw);}
+    case "M"    {$ing=$server->call(signIn,$user,$pasw);}   # Inicia sesión existente
+    case "N"    {$ing=$server->call(logIn,$user,$pasw);}    # Crea nueva cuenta
     else        {print "Algo anda mal...\n"; $ing=0;}
 }
 
