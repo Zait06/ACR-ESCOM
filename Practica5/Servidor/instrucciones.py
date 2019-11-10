@@ -17,6 +17,10 @@ class Instrucciones:
 
     def logIn(self,usua,pasw):                      # Registrar nuevo usuario
         simon=False
+        if usua:
+            print(usua+" - "+pasw)
+        else:
+            print("Que pedo!!!!!")
         try:
             with open("../perfiles.txt","a") as f:  # Abrir archivo para agregar un nuevo miembro
                 f.write(usua+':'+pasw+'\n')
@@ -106,10 +110,10 @@ class Instrucciones:
             "rmdir":"Elimina un directorio",
             "readdir":"Vista de todos los archivos",
             "getattr":"Información de un archivo",
-            "access":"Acceso del usuario"
+            "access":"Acceso del usuario",
             "pwd":"Ruta del usuario"
         }
         texto=""
         for c in coma:
-            texto=texto+(c+"\t"coma[c]+"\n")
+            texto+=(c+"\t"+coma[c]+"\n")
         return texto
