@@ -8,6 +8,7 @@ $server_url = 'http://'.$addr.'/RPC2';                  # Protocolo, direccion, 
 $server = Frontier::Client->new(url => $server_url);    # Conexión del servidor
 
 # Variables para el usuario, contraseña
+print("\tSERVICIO RPC")
 print "Presione [M] si es que cuenta con un perfil, sino,\npresione [N] para crear una nueva cuenta: ";
 $nueva=<STDIN>;
 print "Usuario: "; $user=<STDIN>;
