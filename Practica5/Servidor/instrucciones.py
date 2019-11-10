@@ -4,6 +4,26 @@ import time
 os.chdir('user')
 
 class Instrucciones:
+    def __init__(self):
+        self.coma={
+            "null":"Ping al servidor",
+            "create":"Crea un archivo",
+            "lookup":"Busca un elemento",
+            "read":"Lee un documento",
+            "write":"Edita un documento",
+            "rename":"Cambia el nombre a un documento",
+            "remove":"Elimina un documento",
+            "mkdir":"Crea un directorio",
+            "rmdir":"Elimina un directorio",
+            "readdir":"Vista de todos los archivos",
+            "getattr":"Información de un archivo",
+            "access":"Acceso del usuario"
+            "pwd":"Ruta del usuario"
+        }
+        self.help=''
+        for c in self.coma:
+            self.help+=(c+"\t"coma[c]+"\n")
+
     def signIn(self,usua,pasw):                     # Ingresar con un usuario
         perfil=list(); simon=False
         f=open("../perfiles.txt","r")               # Abrir archivo de perfiles
@@ -92,3 +112,6 @@ class Instrucciones:
 
     def verDireccion(self,usua):                    # pwd
         return os.getcwd()+"/"+usua
+
+    def ayudame(self):
+        return self.help
