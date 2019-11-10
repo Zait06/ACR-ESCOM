@@ -16,7 +16,7 @@ print "Contraseña: "; $pasw=<STDIN>;
 $user=substr($user,0,(length($user)-1));    # usuario sin '\n'
 $pasw=substr($pasw,0,(length($pasw)-1));    # contraseña sin '\n'
 
-if(uc($nueva)=='M'){
+if(uc($nueva)=="M"){
     $ing=$server->call(signIn,$user,$pasw); # Ingresar con un perfil
 }else{
     $ing=$server->call(logIn,$user,$pasw);  # Crear un perfil
@@ -50,6 +50,8 @@ if($ing){
                 case "getattr"  {$imprimir=$server->call(infoArchivo,$instruc[1],$user);}           # Informacion del archivo
                 case "access"   {$imprimir=$server->call(accesoPath,$user);}                        # Acceso del usuario
                 case "pwd"      {$imprimir=$server->call(verDireccion,$user);}                      # Direccion del usuario
+                case "help"     {$imprimir=$server->call(ayudame);}                                 # Lista de comandos
+                case "?"        {$imprimir=$server->call(ayudame);}                                 # Lista de comandos
                 case "exit"     {$imprimir="\n\t\tHASTA PRONTO ".$user."\n"; $seguir=0;}            # Salir de todo
                 else            {$imprimir="Instruccion incorrecta, intente de nuevo\n";}
             }

@@ -51,6 +51,8 @@ if ing:
                 print(s.accesoPath(user))
             elif instruc[0]=='pwd':                                 # Direccion del usuario
                 print(s.verDireccion(user))
+            elif instruc[0]=='help' or instruc[0]=='?':             # Lista de comandos
+                print(s.ayudame())
             elif instruc[0]=='exit':                                # Salir de todo
                 print("\n\t\tHASTA PRONTO "+user+"\n")
                 break
