@@ -86,6 +86,9 @@ class Instrucciones:
         mensaje+='\n\t'+os.getcwd()+"/"+usua
         return mensaje
 
+    def setInfoArchivo(self,nombre,usua):           # setattr
+        return "No se que hace, sorry :c"
+
     def accesoPath(self,usua):                      # access
         req="Acceso para el usuario "+usua
         return req
@@ -111,5 +114,5 @@ class Instrucciones:
         }
         texto=""
         for c in coma:
-            texto+=("\t"c+"\t"+coma[c]+"\n")
+            texto+=("\t"+c+"\t"+coma[c]+"\n")
         return texto
