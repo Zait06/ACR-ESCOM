@@ -15,8 +15,12 @@ pasw=getpass.getpass("Contraseña: ")
 
 if nueva.upper()=='M':
     ing=s.signIn(user,pasw)
-else:
+elif nueva.upper()=='N':
     ing=s.logIn(user,pasw)
+else:
+    print("Algo anda mal...")
+    ing=False
+
 
 if ing:
     print('\tSesión iniciada\n')
@@ -47,6 +51,8 @@ if ing:
                 print(s.verContenido(user))
             elif instruc[0]=='getattr':                             # Informacion del archivo
                 print(s.infoArchivo(instruc[1],user))
+            elif instruc[0]=='setattr':                             # Informacion del archivo
+                print(s.setInfoArchivo(instruc[1],user))
             elif instruc[0]=='access':                              # Acceso del usuario
                 print(s.accesoPath(user))
             elif instruc[0]=='pwd':                                 # Direccion del usuario

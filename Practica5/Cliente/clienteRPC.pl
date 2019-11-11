@@ -50,6 +50,7 @@ if($ing){
                 case "rmdir"    {$imprimir=$server->call(borrarCarpeta,$instruc[1],$user);}         # Elimina un directorio
                 case "readdir"  {$imprimir=$server->call(verContenido,$user);}                      # Vista de todos los archivos
                 case "getattr"  {$imprimir=$server->call(infoArchivo,$instruc[1],$user);}           # Informacion del archivo
+                case "setattr"  {$imprimir=$server->call(setInfoArchivo,$instruc[1],$user);}        # Informacion del archivo
                 case "access"   {$imprimir=$server->call(accesoPath,$user);}                        # Acceso del usuario
                 case "pwd"      {$imprimir=$server->call(verDireccion,$user);}                      # Direccion del usuario
                 case "help"     {$imprimir=$server->call(ayudame);}                                 # Lista de comandos
