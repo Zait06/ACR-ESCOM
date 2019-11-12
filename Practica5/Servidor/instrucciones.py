@@ -90,7 +90,17 @@ class Instrucciones:
         return "No se que hace, sorry :c"
 
     def accesoPath(self,usua):                      # access
-        req="Acceso para el usuario "+usua
+        req="\tAcceso para el usuario "+usua+"\n\n"
+        lista=os.listdir(usua)
+        try:
+            for ele in lista:
+                dt=os.stat("./"+usua+"/"+ele)
+                b=""
+                for j in dt:
+                    b+=str(j)+" "
+                req+=(b+"\t"+ele+"\n")
+        except Exception as e:
+            print(e)
         return req
 
     def verDireccion(self,usua):                    # pwd
